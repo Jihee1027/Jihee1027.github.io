@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPU Vertex Stage | Jihee Kim</title>
+<meta name="description" content="A fixed-point GPU vertex stage in SystemVerilog for the Purdue SoCET GPU team: transforms, perspective division and screen-space conversion, in progress.">
+<meta property="og:title" content="GPU Vertex Stage | Jihee Kim">
+<meta property="og:description" content="A fixed-point GPU vertex stage in SystemVerilog for the Purdue SoCET GPU team: transforms, perspective division and screen-space conversion, in progress.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#relay"><strong>Report and Photo Relay Service</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
+    <div>
+      <p class="eyebrow">Purdue SoCET GPU &middot; Sep 2026 to present</p>
+      <h1>GPU Vertex Stage</h1>
+      <ul class="tags"><li>SystemVerilog</li><li>FPGA</li><li>Fixed point</li><li>Pipelining</li></ul>
+      <p class="lede measure">The vertex stage of a GPU datapath, in fixed point. It transforms vertices, divides by w, and converts normalized coordinates into screen space. The work is in progress.</p>
+    </div>
+  </header>
+  <div class="pdar" role="group" aria-label="Problem, data, action, result"><div class="pd"><span>Problem</span><p>A vertex stage has to transform vertices, divide by w and convert to screen space, one vertex after another, in fixed point and inside an FPGA's resource and clock budget.</p></div><div class="pd"><span>Data</span><p>Design targets of 125 MHz, 10M vertices per second and 60 FPS; a 24-bit Q16.8 format; RTL test results.</p></div><div class="pd"><span>Action</span><p>Split the work into transform, perspective-divide and screen-space modules, then built the perspective-divide prototype and tested it.</p></div><div class="pd"><span>Result</span><p>The prototype passes 8 RTL tests and produces back-to-back outputs in simulation. The other modules are still in progress.</p></div></div>
+  <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/gpu-pipeline.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/gpu-pipeline.svg" width="1040" height="352" alt="A vertex passes through matrix-vector multiplication, perspective division and screen-space conversion, each an independent module with a fixed-point interface."></a></div><figcaption><b>Fig. 1</b> The planned data path as three independent modules, and the four things the design has to balance.</figcaption></figure>
+  <div class="cols3"><div class="col"><span class="num">01</span><h3 style="margin-top:6px">What it is</h3><p>Separate modules for 4&times;4 model-view-projection transforms, perspective division and screen-space conversion, using 24-bit Q16.8 fixed-point values.</p></div><div class="col"><span class="num">02</span><h3 style="margin-top:6px">Where it stands</h3><p>A perspective-divide prototype passes 8 RTL tests and produces back-to-back outputs at one per cycle in simulation. The design targets are 125 MHz, 10M vertices per second and 60 FPS.</p></div><div class="col"><span class="num">03</span><h3 style="margin-top:6px">What I have to balance</h3><p>Numerical precision, FPGA resource usage, clock frequency and pipeline throughput. Improving one usually costs another.</p></div></div>
+  <nav class="pager wrap-in" aria-label="More"><a href="riscv.html"><span>Previous</span><strong>&larr; RISC-V Processor</strong></a><a class="next" href="console.html"><span>Next</span><strong>RetroCore Gaming Console &rarr;</strong></a></nav>
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>

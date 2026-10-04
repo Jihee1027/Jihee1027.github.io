@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AHB Neural Network Accelerator | Jihee Kim</title>
+<meta name="description" content="An 8x8 weight-stationary systolic-array neural accelerator with an AHB interface: array and activation blocks, test plan, synthesis and timing analysis.">
+<meta property="og:title" content="AHB Neural Network Accelerator | Jihee Kim">
+<meta property="og:description" content="An 8x8 weight-stationary systolic-array neural accelerator with an AHB interface: array and activation blocks, test plan, synthesis and timing analysis.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#relay"><strong>Report and Photo Relay Service</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
+    <div>
+      <p class="eyebrow">ASIC design &middot; Purdue ECE 337 &middot; Group of three</p>
+      <h1>AHB Neural Network Accelerator</h1>
+      <ul class="tags"><li>SystemVerilog</li><li>AHB</li><li>Design Compiler</li><li>QuestaSim</li></ul>
+      <p class="lede measure">A small neural-network accelerator in SystemVerilog: a weight-stationary systolic array behind an AHB register interface, taken through simulation, synthesis and timing analysis. Three of us split the blocks. My part was the systolic array and the activation stage.</p>
+    </div>
+  </header>
+  <div class="pdar" role="group" aria-label="Problem, data, action, result"><div class="pd"><span>Problem</span><p>Neural-network inference is mostly multiply-accumulate work. We needed a small accelerator, reachable over a standard bus, that takes reduced-precision inputs and applies common activations.</p></div><div class="pd"><span>Data</span><p>FP8 minifloat inputs and weights; test matrices (identity, bias, several activations, a 128-input vector); error cases such as NaN, infinity and AHB overrun; synthesis and timing reports.</p></div><div class="pd"><span>Action</span><p>Built the 8&times;8 weight-stationary array with 64 processing elements and the activation stage, tested each block and then the top level, and helped debug the integration.</p></div><div class="pd"><span>Result</span><p>The array and activation blocks were verified in simulation and ran inside the integrated design, which went through synthesis and timing analysis.</p></div></div>
+  <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/asic-accelerator.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/asic-accelerator.svg" width="1040" height="540" alt="A simplified data path: FP8 inputs are converted to 16-bit, weights are stored, an 8 by 8 weight-stationary systolic array computes, partial sums are pipelined, and bias and activation produce the output. An AHB register interface controls the blocks."></a></div><figcaption><b>Fig. 1</b> Simplified data path, control interface and verification. A schematic of the architecture, not the RTL.</figcaption></figure>
+  <div class="cols3">
+    <div class="col"><span class="num">01</span><h3 style="margin-top:6px">My blocks</h3><p>The 8&times;8 systolic array with 64 pipelined processing elements, the FP8-to-16-bit conversion, weight storage and partial-sum pipelines, and the activation stage with ReLU, Leaky ReLU, binary and identity modes.</p></div>
+    <div class="col"><span class="num">02</span><h3 style="margin-top:6px">Teammates' blocks</h3><p>The AHB subordinate, the controller with its input state machine, the SRAM data buffer and the top level were teammates' work. I helped debug the integration.</p></div>
+    <div class="col"><span class="num">03</span><h3 style="margin-top:6px">Where it got hard</h3><p>Integration. Register controls, reset sequencing and data widths between the AHB interface, controller and array took more time than the array itself.</p></div>
+  </div>
+
+  <section class="sec" id="array">
+    <div class="sec-head"><div><span class="num">02</span><h2>The systolic array datapath</h2></div>
+      <p>Eight columns of weights stay in place while inputs flow through staggered across eight lanes. Each processing element multiplies, adds the sum from its neighbor and passes the result on through pipeline registers, so results can leave through the output pipeline. The diagram below is the datapath for the array block.</p></div>
+    <figure class="fig"><div class="fig-frame raster"><a href="assets/images/asic-array-schematic-full.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/images/asic-array-schematic.png" width="1600" height="1694" alt="Datapath diagram of the eight by eight systolic array: input registers on the left, eight columns of processing elements with weight registers on top, output pipeline registers at the bottom feeding a data-out block"></a></div><figcaption><b>Fig. 2</b> Datapath of the array block. Weights load along the top, inputs enter on the left, and partial sums move down to the output pipeline. Click for the full-size image.</figcaption></figure>
+  </section>
+
+  <section class="sec" id="activation">
+    <div class="sec-head"><div><span class="num">03</span><h2>The activation block</h2></div>
+      <p>I also designed the activation stage, the last step before results leave the accelerator. It unpacks the 64-bit word into eight 8-bit minifloat values, applies the mode chosen by a 2-bit select, and packs the eight results back.</p></div>
+    <figure class="fig"><div class="fig-frame raster"><a href="assets/images/asic-activation-block.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/images/asic-activation-block.png" width="1111" height="653" alt="Block diagram of the activation logic: a 64-bit input is unpacked into eight 8-bit values, a 2-bit select chooses ReLU, binary, identity or leaky ReLU, and the eight results are packed into a 64-bit output"></a></div><figcaption><b>Fig. 3</b> Activation block, drawn by me: unpack, select, pack.</figcaption></figure>
+    <div class="cols2">
+      <div class="col"><h3>Four modes, one select</h3><p>ReLU turns negative values into zero. Binary outputs +1 or &minus;1 by sign. Identity passes the value through. Leaky ReLU keeps positive values and scales negative ones by 0.25. Each constant is an 8-bit minifloat encoding.</p></div>
+      <div class="col"><h3>Zero is not negative</h3><p>The sign check also tests whether the value is zero, so a negative-signed zero is not treated as a negative number. Small details like this are where numeric formats cause bugs.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="verify">
+    <div class="sec-head"><div><span class="num">04</span><h2>How the design was checked</h2></div>
+      <p>The group wrote a test plan that starts at the top level and drops into each block as needed. These are the tests for my array block, and the top-level checks around it.</p></div>
+    <div class="cols2" style="margin-top:0">
+      <div class="col"><h3>Array block</h3>
+        <ul class="list">
+          <li>Load weights: each weight lands in the right position based on the count.</li>
+          <li>Load inputs: inputs are staggered correctly across the lanes.</li>
+          <li>Multiply and sum: identity and normal cases in 8-bit minifloat, adding the previous sum down each column.</li>
+          <li>Output pipeline: the right alignment for the outputs of the last row and column.</li>
+          <li>Data out: the correct 64 bits from the pipelined outputs.</li>
+          <li>Reset clears data mid-operation, and the done pulse arrives with the data.</li>
+        </ul></div>
+      <div class="col"><h3>Top level and interface</h3>
+        <ul class="list">
+          <li>A basic test with an identity matrix, zero bias and a pass-through activation.</li>
+          <li>A full test with bias, several activations and various input and weight matrices.</li>
+          <li>A 128-input vector test, and error cases such as an AHB overrun, NaN and infinity.</li>
+          <li>AHB register reads and writes, writes to read-only registers, too many weights or inputs, and writes while busy.</li>
+        </ul></div>
+    </div>
+  </section>
+
+  <section class="sec" id="flow">
+    <div class="sec-head"><div><span class="num">05</span><h2>From RTL to a layout lab</h2></div>
+      <p>RTL simulation ran in QuestaSim, synthesis in Synopsys Design Compiler, and timing analysis followed. In a separate layout lab on a provided USB design in Cadence Innovus I looked at I/O placement, interconnect delay and timing slack.</p></div>
+  </section>
+  <nav class="pager wrap-in" aria-label="More"><a href="console.html"><span>Previous</span><strong>&larr; RetroCore Gaming Console</strong></a></nav>
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>

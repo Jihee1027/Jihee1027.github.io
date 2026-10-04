@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vision Engineering | Jihee Kim</title>
+<meta name="description" content="Case study: inspection automation and a Raspberry Pi image-logging system in battery manufacturing.">
+<meta property="og:title" content="Vision Engineering | Jihee Kim">
+<meta property="og:description" content="Case study: inspection automation and a Raspberry Pi image-logging system in battery manufacturing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html" aria-current="page">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#relay"><strong>Report and Photo Relay Service</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html">Projects</a><div class="sub"><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+
+<div class="wrap case">
+  <a class="crumb" href="experience.html">&larr; Experience</a>
+  <header class="case-hero">
+    <div>
+      <p class="eyebrow">Automation &middot; Vision systems</p>
+      <h1>Vision Engineering</h1>
+      <p class="case-meta">Intern &middot; LG Energy Solution Michigan &middot; May 2025 &ndash; January 2026</p>
+      <p class="lede">I started the internship building a Raspberry Pi image-logging system at the unloader. After that I looked after the vision program that inspects the anode and cathode electrodes: checking its data every day, tuning it when it flagged the wrong things, and getting systems back up when they went down. Each inspection view, such as the foil area or CIS, could be wrong in two ways, a false positive or a false negative.</p>
+    </div>
+    <aside class="glance">
+      <h2>Role at a glance</h2>
+      <ul class="list">
+        <li>Built a Raspberry Pi image-logging system at the unloader: ROI-triggered capture, master and slave Pis, central review.</li>
+        <li>Reviewed vision data every morning and afternoon: defect rates by view, false positives and negatives, missed or false triggers.</li>
+        <li>Tuned the vision program against production data: about 10% fewer false positives.</li>
+        <li>Restored down systems with a fixed routine (program, camera, trigger board, recipe, then the links), found that a trigger reset left cells uninspected, and had the vendor mark them NG.</li>
+        <li>Wrote a Python tool that tracks production and POR in real time and reports every hour: about 7.2% higher production throughput. Also a chat relay service for reports and photos.</li>
+      </ul>
+    </aside>
+  </header>
+  <nav class="jump" aria-label="On this page"><a href="#pi"><span>01</span>Pi logging</a><a href="#daily"><span>02</span>Daily checks</a><a href="#tuning"><span>03</span>Recipe tuning</a><a href="#down"><span>04</span>System down</a><a href="#automation"><span>05</span>Report tool</a><a href="#debug"><span>06</span>Signal debugging</a><a href="#relay"><span>07</span>Chat relay</a></nav>
+  <p class="note" style="margin-top:18px">Public summary. Thresholds, recipe values, defect names, line and equipment names, and production counts are left out.</p>
+
+  <section class="sec" id="pi" style="padding-top:40px">
+    <div class="sec-head"><div><span class="num">01</span><h2>Raspberry Pi image logging at the unloader</h2></div>
+      <p>This was my first project of the internship: an image-capture and logging system built from several Raspberry Pis, so the images behind an inspection result could be stored, found and reviewed.</p></div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-system.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-system.svg" width="1040" height="440" alt="Cameras fired by trigger boards at the unloader feed slave Raspberry Pis that capture ROI images, a master Pi that coordinates them over LAN and Tailscale, and an industrial PC for central logging and review. Below: three layers checked when it failed, and what the images gave the line."></a></div><figcaption><b>Fig. 1</b> The image-logging chain, and the three layers I checked when it failed.</figcaption></figure>
+    <div class="cols2">
+      <div class="col"><h3>Master and slave</h3><p>Slave Pis captured images and a master Pi coordinated them over LAN sockets, with Tailscale for remote access.</p></div>
+      <div class="col"><h3>ROI-triggered capture</h3><p>Capture was triggered on a region of interest, so the stored images were the ones that mattered for defect analysis.</p></div>
+      <div class="col"><h3>Central review</h3><p>Images were logged centrally on an industrial PC for review and traceability.</p></div>
+      <div class="col"><h3>Why it mattered</h3><p>With images tied to production metrics, a defect rate could be traced back to the images behind it, which is what made root cause analysis possible later.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="daily">
+    <div class="sec-head"><div><span class="num">02</span><h2>A day of vision data checks</h2></div>
+      <p>Mornings were for finding out what had changed since yesterday. Afternoons were for acting on it and checking that the fix held.</p></div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-daily.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-daily.svg" width="1040" height="576" alt="Morning: review overnight vision data, system health and over- and missed detection, then plan. Afternoon: investigate flagged views, adjust, verify with the same data, and record. All day: hourly alerts, and the troubleshooting ladder when a system goes down."></a></div><figcaption><b>Fig. 2</b> The daily routine. Morning is review and planning, afternoon is investigation, adjustment and verification.</figcaption></figure>
+    <div class="cols2">
+      <div class="col"><h3>Morning</h3>
+        <ul class="list">
+          <li>Read the overnight defect rates by view in SPC and Spotfire and looked for shifts, not just totals.</li>
+          <li>Checked system health: missed or false triggers, gaps in image logging and any down events.</li>
+          <li>Separated false positives from false negatives, and checked the flagged cases against the stored images.</li>
+          <li>Decided what needed a recipe change and what needed a bench check.</li>
+        </ul></div>
+      <div class="col"><h3>Afternoon</h3>
+        <ul class="list">
+          <li>Pulled images and equipment logs for the views that looked wrong, and correlated them with production metrics for root cause.</li>
+          <li>Adjusted the recipe, the camera, the trigger timing or the hardware, depending on what the evidence pointed to.</li>
+          <li>Rechecked the same data after the change, under normal production, before calling it fixed.</li>
+          <li>Wrote down what changed, why, and what to keep watching.</li>
+        </ul></div>
+    </div>
+    <p class="note">Reporting ran all day. The Python tool in section 05 posted production and POR every hour.</p>
+  </section>
+
+  <section class="sec" id="tuning">
+    <div class="sec-head"><div><span class="num">03</span><h2>Tuning the vision program with data</h2></div>
+      <p>The vision program flagged defects on the anode and cathode electrodes. Whether it flagged the right ones was a data question. I read the inspection results in SPC and Spotfire for false positives (over-detection) and false negatives (missed detection), then adjusted the recipe for the view that was off.</p></div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-tuning.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-tuning.svg" width="1040" height="656" alt="The vision program inspects the electrode and logs results. Defect rates by view are read in SPC and Spotfire to find over-detection, where good material is flagged, and missed detection, where real defects pass. The recipe for that view is adjusted and the same data is checked again."></a></div><figcaption><b>Fig. 3</b> The tuning loop and what the improvements moved. A recipe change counted only when the same data and the production images showed it held.</figcaption></figure>
+    <div class="cols3">
+      <div class="col"><h3>Views behave differently</h3><p>The foil area, CIS and other views each had their own failure patterns, so I read each view's results separately instead of one overall defect number.</p></div>
+      <div class="col"><h3>Two errors, one trade-off</h3><p>Tightening a threshold reduces false positives and risks false negatives, and loosening does the reverse. I looked at both together, with production images, before changing a recipe.</p></div>
+      <div class="col"><h3>What it moved</h3><p>Approximately 10% fewer false positives, and inspection that held up better as production conditions changed.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="down">
+    <div class="sec-head"><div><span class="num">04</span><h2>When a vision system goes down</h2></div>
+      <p>Systems went down more often than anyone liked, and a down system means parts pass through without being inspected. So I wanted a routine I could run quickly, and I wanted to know what each step really did.</p></div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-troubleshoot.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-troubleshoot.svg" width="1040" height="596" alt="Restart the vision program, reset the camera, reset the trigger board, reload the recipe, then check the links between the inspection PC, the interface PC, the PLC and the camera grab. A trigger-board reset drops the cells still in flight, so those cells are marked NG. A failure that returns goes to bench analysis with an oscilloscope or logic analyzer."></a></div><figcaption><b>Fig. 4</b> What I tried, in order, and the catch I found in the trigger-board reset.</figcaption></figure>
+    <div class="cols3">
+      <div class="col"><h3>The routine</h3><p>Turn the vision program off and on, reset the camera, reset the trigger board, then load the recipe again. After that I checked that the inspection PC and the interface PC were talking, that the PLC connection was up, and that the camera was grabbing images.</p></div>
+      <div class="col"><h3>The catch I found</h3><p>The trigger board keeps a running record of cell numbers and matches each cell as it is released. When I reset the board, any cells that had not come back were lost, which meant that stretch had not been inspected. The system looked normal again, but the inspection was missing.</p></div>
+      <div class="col"><h3>What we changed</h3><p>I worked it out with the vendor's developer, and the program was changed so that after a trigger reset the cells whose inspection was lost are marked NG instead of passing quietly.</p></div>
+    </div>
+    <p class="note" style="font-style:normal">Why this story is here: a reset made the system look healthy while a stretch of cells had never been inspected. It taught me to ask what a fix costs, not only whether the system came back, and to take a problem like that to the vendor with the evidence instead of working around it.</p>
+    <p class="note">If a failure kept coming back, I took it to the bench with an oscilloscope and a logic analyzer on the trigger and timing signals. That is how timing and signal problems between the trigger boards, cameras and vision software were found and fixed.</p>
+  </section>
+
+  <section class="sec" id="automation">
+    <div class="sec-head"><div><span class="num">05</span><h2>Python report tool</h2></div>
+      <p>I automated the tracking so that production and POR numbers reached people every hour without anyone pulling them by hand. I built it around the constraints of the real production line, not just software tests.</p></div>
+    <div class="cols3" style="margin-top:0">
+      <div class="col"><h3>What it tracked</h3><p>A Python framework on Windows, built on Win32 APIs, followed production and POR in real time from FMCS data.</p></div>
+      <div class="col"><h3>Every hour</h3><p>It reported automatically each hour, so the numbers were in front of the team during the shift, not at the end of it.</p></div>
+      <div class="col"><h3>What it moved</h3><p>Production throughput rose by about 7.2% after it went in. The absolute volume is not published.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="debug">
+    <div class="sec-head"><div><span class="num">06</span><h2>Signal-level and hardware debugging</h2></div>
+      <p>Not every inspection problem was a software problem. Signal-level debugging was often what isolated the issue.</p></div>
+    <div class="cols2" style="margin-top:0">
+      <div class="col"><h3>Reliability</h3><p>I worked across software, communication and hardware layers when isolating failures.</p></div>
+      <div class="col"><h3>Cameras and trigger boards</h3><p>I troubleshot camera, trigger-board, timing-signal and communication failures using equipment logs and production data as well as bench instruments.</p></div>
+      <div class="col"><h3>Oscilloscope and logic analyzer</h3><p>I used waveforms to check electrical behavior and timing, and digital captures to look at communication on the inspection hardware.</p></div>
+      <div class="col"><h3>CIS interface and cabling</h3><p>I investigated failures tied to CIS hardware and cable connections, and found and corrected a cable-related issue that was affecting system behavior.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="relay">
+    <div class="sec-head"><div><span class="num">07</span><h2>Report and photo relay service</h2></div>
+      <p>A small Windows service that relayed automated production summaries and line photos to the right chat rooms. This section shows how it behaves. Room names, targets and addresses are left out, and the code itself stays private.</p></div>
+    <div class="pdar" role="group" aria-label="Problem, data, action, result"><div class="pd"><span>Problem</span><p>Automated production summaries and line photos had to reach the right chat rooms on time, without someone forwarding them by hand and without sending anything twice.</p></div><div class="pd"><span>Data</span><p>Timestamped summary emails, the previous saved snapshot, and photo folders uploaded by devices.</p></div><div class="pd"><span>Action</span><p>Wrote a Python Windows service: a 60-second cycle, skip anything already seen, parse and compare, checkpointed sends through one queue, and a supervisor and watchdog for restarts.</p></div><div class="pd"><span>Result</span><p>Each report goes out once, a crash resumes at the missing part, a failed parse sends nothing, and the service restarts itself. No usage numbers are published.</p></div></div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-cycle.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-cycle.svg" width="1040" height="500" alt="A report task fetches the latest summary email, skips it if already processed, parses it, compares it with the last snapshot, formats and sends each section with checkpoints, then saves the snapshot."></a></div><figcaption><b>Fig. 5</b> One report cycle. Every 60 seconds each report task runs this sequence, and a task that fails is skipped without stopping the others.</figcaption></figure>
+    <div class="cols3">
+      <div class="col"><h3>Never send the same report twice</h3><p>Each email is identified by its timestamp. Multi-part reports are checkpointed section by section, so a crash halfway through resumes at the missing part.</p></div>
+      <div class="col"><h3>Fail quietly, not wrongly</h3><p>If an email cannot be parsed, nothing is sent. The failure is logged and the loop moves on to the next task instead of posting a half-right message.</p></div>
+      <div class="col"><h3>Say what changed</h3><p>Every report is compared with the last saved snapshot, so the message tells people what moved since the previous one.</p></div>
+    </div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-photo.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-photo.svg" width="1040" height="520" alt="Edge devices upload photos into per-device folders and then trigger a send. The server replies at once and a worker queues the folder once, waits for late uploads, sends it as one batch, archives the files, and re-queues if new files arrived."></a></div><figcaption><b>Fig. 6</b> Photo pipeline. Devices upload as they go, then trigger one send per folder.</figcaption></figure>
+    <div class="cols2">
+      <div class="col"><h3>Upload and send are separate on purpose</h3><p>Devices upload files whenever they are ready and trigger a send once. The server replies immediately and a background worker does the rest, so a slow send never blocks the device.</p></div>
+      <div class="col"><h3>Late files are not lost</h3><p>A folder is queued once. If a trigger arrives while it is being processed, it is marked pending and run again afterwards. Sent files are archived into dated success or fail folders with a history log.</p></div>
+    </div>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-queue.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-queue.svg" width="1040" height="330" alt="Report tasks and the photo task submit jobs to a single first-in first-out queue. One worker runs one job at a time through the messaging app's UI automation."></a></div><figcaption><b>Fig. 7</b> One sender at a time. Both pipelines share a single first-in first-out queue.</figcaption></figure>
+    <figure class="fig"><div class="fig-frame"><a href="assets/diagrams/png/vision-keepalive.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-keepalive.svg" width="1040" height="300" alt="Windows Task Scheduler starts a supervisor, the supervisor respawns a watchdog, and the watchdog restarts the application whenever it exits."></a></div><figcaption><b>Fig. 8</b> How it stays up on an unattended PC. Each layer restarts the one below it.</figcaption></figure>
+  </section>
+
+  <nav class="pager wrap-in" aria-label="More"><a href="process.html"><span>Previous</span><strong>&larr; Process Technology Engineering</strong></a></nav>
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>
