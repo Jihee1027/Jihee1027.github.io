@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Toward semiconductor process | Jihee Kim</title>
-<meta name="description" content="Study notes on MOSFET, FinFET and GAA transistors and the process flow, and how Jihee Kim would apply her industry process experience as a process integration engineer.">
-<meta property="og:title" content="Toward semiconductor process | Jihee Kim">
-<meta property="og:description" content="Study notes on MOSFET, FinFET and GAA transistors and the process flow, and how Jihee Kim would apply her industry process experience as a process integration engineer.">
+<title>Toward semiconductor process integration | Jihee Kim</title>
+<meta name="description" content="Study notes on MOSFET, FinFET and GAA transistors, the process flow, and how Jihee Kim would approach process integration problems.">
+<meta property="og:title" content="Toward semiconductor process integration | Jihee Kim">
+<meta property="og:description" content="Study notes on MOSFET, FinFET and GAA transistors, the process flow, and how Jihee Kim would approach process integration problems.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html">Jihee Kim</a>
-    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#relay"><strong>Report and Photo Relay Service</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html">Projects</a><div class="sub"><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html" aria-current="page">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#automation"><strong>Reporting Automation</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html">Projects</a><div class="sub"><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html" aria-current="page">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
   </div>
 </header>
 <main id="main">
@@ -28,8 +28,8 @@
   <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
     <div>
       <p class="eyebrow">Study notes</p>
-      <h1>Toward semiconductor process</h1>
-      <p class="lede measure">These are my own notes on how transistors and the process flow work, followed by how I would apply what I learned in my industry internships as a process integration engineer.</p>
+      <h1>Toward semiconductor process integration</h1>
+      <p class="lede measure">These are my study notes on how transistors and the process flow work, followed by how I would approach integration questions such as a Vth shift or a yield excursion. They reflect what I am learning and how I would work, not fab experience.</p>
     </div>
   </header>
 
@@ -41,12 +41,12 @@
       <div class="col"><h3>FinFET</h3><p>The channel is a thin vertical fin and the gate wraps three of its sides. More of the channel is under the gate's control, so leakage drops. The fin's width and height now matter a great deal.</p></div>
       <div class="col"><h3>Gate-all-around</h3><p>The gate wraps the channel on every side, and the channel becomes stacked nanosheets or nanowires. Control improves again, but the flow gets harder: a stack of alternating layers, then selective removal of the sacrificial ones.</p></div>
     </div>
-    <p class="note" style="font-style:normal">Underneath all three is CMOS: an NMOS and a PMOS paired so that one of them is always off. That is why a logic gate draws very little current when it is not switching.</p>
+    <p class="note" style="font-style:normal">Underneath all three is CMOS. CMOS logic uses complementary n-channel and p-channel devices. In an ideal static CMOS state there is no direct DC path from VDD to ground through both networks at once; real devices still have leakage.</p>
   </section>
 
   <section class="sec" id="flow">
     <div class="sec-head"><div><span class="num">02</span><h2>The flow, in a few lines</h2></div>
-      <p>This is how I learned it: oxidation, photolithography, etching, thin-film deposition and ion implantation, repeated layer by layer. Then the metal interconnect, electrical test, dicing and packaging.</p></div>
+      <p>Semiconductor fabrication repeatedly uses deposition or oxidation, lithography, etch, implantation, anneal, cleaning, and planarization to build the device and interconnect layers. The exact sequence depends on the device architecture and integration scheme.</p></div>
     <div class="cols3" style="margin-top:0">
       <div class="col"><h3>FEOL</h3><p>Front end of line. This is where the transistors themselves are built: isolation, the gate, source and drain.</p></div>
       <div class="col"><h3>MEOL</h3><p>Middle end of line. Contacts connect the transistors up to the first metal layer.</p></div>
@@ -56,22 +56,22 @@
   </section>
 
   <section class="sec" id="vth">
-    <div class="sec-head"><div><span class="num">03</span><h2>When Vth jumps or drifts</h2></div>
-      <p>Vth is the gate voltage where a transistor turns on. If test data shows it jumping or sliding, this is the order I would look in.</p></div>
+    <div class="sec-head"><div><span class="num">03</span><h2>When Vth shifts</h2></div>
+      <p>Threshold voltage (Vth) is an extracted device parameter associated with the onset of strong channel conduction. Its numerical value depends on the device and the extraction method. If Vth shifts, I would first determine the pattern before assigning a process cause.</p></div>
     <div class="cols3" style="margin-top:0">
-      <div class="col"><h3>The layers that set it</h3><p>Thin film, etch and photo first. If the gate insulation is off, for example the wrong thickness or not insulating well, Vth moves. I would also look at ion implant, since the dose sets the channel doping. Then thickness data and SPC for each of those steps.</p></div>
-      <div class="col"><h3>The lots and the history</h3><p>Put the affected lots on hold and look for a trend: which lots, which tools, when it began. Then read the change history for any recipe, equipment or material change around that time.</p></div>
-      <div class="col"><h3>Reproduce it, then test</h3><p>Run the same recipe on a test line, then run a DOE to find the best recipe. Check whether it is a trend across the whole module or only one step.</p></div>
+      <div class="col"><h3>Find the pattern first</h3><p>Which product, device type, lot, wafer, tool or chamber is affected, and when the shift began. I would not name a process cause until I could describe the pattern.</p></div>
+      <div class="col"><h3>Correlate, then list contributors</h3><p>I would correlate the affected population with inline metrology, electrical data, process history, and recent equipment or recipe changes. Depending on the pattern, contributors could include gate dielectric thickness or EOT, interface quality, the work-function metal stack, channel doping or activation, CD and geometry, and thermal history.</p></div>
+      <div class="col"><h3>Contain, compare, then test</h3><p>Contain the affected material according to fab procedure, compare affected lots with healthy references, look for tool, chamber or time commonality, and review recent recipe, equipment, material, and maintenance changes. Once the likely contributor is narrowed, use monitor material, engineering splits, or a DOE with the responsible process module to test a defined hypothesis.</p></div>
     </div>
   </section>
 
   <section class="sec" id="apply">
     <div class="sec-head"><div><span class="num">04</span><h2>How I would apply my work</h2></div>
-      <p>This is how I would approach the job, based on my industry experience.</p></div>
+      <p>This is how I would approach the job, based on how I worked in my manufacturing internships.</p></div>
     <div class="cols3" style="margin-top:0">
       <div class="col"><h3>A new product or a transfer</h3><p>In my internship I qualified a change across several production lots with a sampling plan and judged it on the downstream result. In a transfer I would start from the same question: does the receiving line behave like the source line, and how would I know?</p></div>
-      <div class="col"><h3>A yield excursion</h3><p>I would do what I did with defect trends. Find when it started, then split by lot, tool, chamber and time to see what the affected material has in common.</p></div>
-      <div class="col"><h3>Planning an experiment</h3><p>A baseline first, one variable at a time, and a check that the result holds across every operating condition. That was the laser DOE.</p></div>
+      <div class="col"><h3>A yield excursion</h3><p>I would do what I did with defect trends: find when it started, then split by lot, tool, chamber and time to see what the affected material has in common, and read that together with electrical and inline data.</p></div>
+      <div class="col"><h3>Planning an experiment</h3><p>Start from a known baseline, define the factors and measurable responses, use controlled splits or DOE as appropriate, and check interactions when they matter. Then verify that the result holds across the intended process window. That is how I approached the laser DOE.</p></div>
       <div class="col"><h3>Working across teams</h3><p>In my internship I sent one daily report to Process, Equipment, Production and Quality, with a root cause status and the next action. I would expect to do the same with device, lithography, etch and thin films.</p></div>
       <div class="col"><h3>Shifts and on-call</h3><p>As an intern I worked nights and weekends, every weekend for a stretch, and a lot of overtime when the line needed it.</p></div>
       <div class="col"><h3>What I want to learn first</h3><p>How electrical test and reliability data connect back to a specific process step, and how experienced engineers read them. I would start by asking.</p></div>
