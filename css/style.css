@@ -274,3 +274,15 @@ details.secondary[open] > summary { margin-bottom: 12px; }
 .crop-row.wide { grid-template-columns: 1fr; gap: 12px; }
 .crop-row .fig-frame img { max-height: none; }
 .crop-row:not(.wide) .fig-frame img { max-width: 560px; margin: 0 auto; }
+
+/* ---- positioning pass ---- */
+.pi-note { margin: 22px 0 8px; padding: 12px 18px; max-width: 80ch; border-left: 3px solid #aab1b5; background: transparent; }
+.pi-note .pi-label { display: block; font: 600 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.pi-note p { margin: 0; font-size: 15px; line-height: 1.55; color: #2e3a40; }
+.hub-card.primary { grid-column: 1 / -1; border-color: var(--teal); border-width: 1.5px; padding: 32px 34px; }
+.hub-card.primary h3 { font-size: 1.5rem; }
+.hub-card.primary p { max-width: 70ch; font-size: 1.04rem; }
+.hub-card.quiet { background: transparent; border-style: dashed; padding: 20px 24px; }
+.hub-card.quiet h3 { font-size: 1.05rem; }
+.hub-card.quiet p { font-size: .95rem; }
+.hub-card.quiet { grid-column: 1 / -1; }
