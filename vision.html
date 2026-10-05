@@ -159,8 +159,8 @@
     </ul>
     <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/vision-photo.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/vision-photo.svg" width="1040" height="520" alt="Edge devices upload photos into per-device folders and then trigger a send. The server replies at once and a worker queues the folder once, waits for late uploads, sends it as one batch, archives the files, and re-queues if new files arrived."></a></div><figcaption><b>Fig. 9</b> Image-delivery extension, in development: devices upload as they go, then trigger one send per folder.</figcaption></figure>
     <div class="cols2">
-      <div class="col"><h3>Upload and send are separate by design</h3><p>Devices upload files whenever they are ready and trigger a send once. The server replies immediately and a background worker does the rest, so a slow send never blocks the device.</p></div>
-      <div class="col"><h3>Late files are not lost</h3><p>A folder is queued once. If a trigger arrives while it is being processed, it is marked pending and run again afterwards. Sent files are archived into dated success or fail folders with a history log.</p></div>
+      <div class="col"><h3>Upload and send are separate by design</h3><p>The planned workflow had devices upload files whenever they were ready and trigger a send once. The server would reply immediately and a background worker would handle the rest, so a slow send would not block the device.</p></div>
+      <div class="col"><h3>Late files are not lost</h3><p>In the design, a folder would be queued once. If a trigger arrived while it was being processed, it would be marked pending and run again afterward. Sent files would be archived into dated success or fail folders with a history log.</p></div>
     </div>
   </section>
 
