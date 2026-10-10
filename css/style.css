@@ -249,7 +249,7 @@ ul.list li::before { content: ""; position: absolute; left: 0; top: .78em; width
   .st-head { display: none; }
   .st-row { grid-template-columns: 1fr; gap: 6px; padding: 18px 0; }
   .st-row > span:nth-child(2)::before { content: "Problem: "; font-weight: 600; color: var(--ink); }
-  .st-row > span:nth-child(3)::before { content: "What I did: "; font-weight: 600; color: var(--ink); }
+  .st-row > span:nth-child(3)::before { content: "Action: "; font-weight: 600; color: var(--ink); }
   .st-row > span:nth-child(4)::before { content: "Result: "; font-weight: 600; color: var(--ink); }
 }
 
