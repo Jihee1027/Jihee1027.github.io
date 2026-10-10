@@ -18,7 +18,7 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html">Jihee Kim</a>
-    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a><a href="vision.html#automation"><strong>Reporting Automation</strong><span>Vision internship software</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>What I'm studying</strong><span>Transistors, process flow, how I'd apply my work</span></a></div></div></nav>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="process.html"><strong>Process Technology</strong><span>Internship, 2026</span></a><a href="vision.html"><strong>Vision Engineering</strong><span>Internship, 2025&ndash;26</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, in progress</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, in progress</span></a><a href="console.html"><strong>RetroCore Gaming Console</strong><span>Senior design, in progress</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#background"><strong>Education and background</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a><a href="semiconductor.html"><strong>Semiconductor studies</strong><span>Transistors, fabrication, and integration</span></a></div></div></nav>
   </div>
 </header>
 <main id="main">
@@ -26,15 +26,15 @@
 <div class="wrap case">
   <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
     <div>
-      <p class="eyebrow">Projects &middot; Supporting technical depth</p>
+      <p class="eyebrow">Projects &middot; Digital hardware projects</p>
       <h1>Hardware context for process integration</h1>
-      <p class="lede measure">My target is semiconductor process integration. These projects give me circuit and system context for that work, showing how device behavior, timing, interfaces, and implementation constraints appear downstream from manufacturing. Together, they provide supporting technical depth for understanding how process and device variation can affect circuit and system behavior.</p>
+      <p class="lede measure">ASIC, CPU, GPU, and FPGA projects covering RTL design, verification, timing, and system integration. Each project documents the work completed, the main engineering problem, the action taken, and the current result. Together, they provide circuit and system context for semiconductor process integration.</p>
     </div>
   </header>
   <section class="sec" id="projects">
     <div class="sec-head" style="display:none">
       <div><span class="num">04</span><h2>Projects</h2></div>
-      <p>Hardware projects at Purdue. In all of them I break the design into pieces I can test, agree on the interfaces, and put them together one at a time.</p>
+      <p>Hardware development organized around defined interfaces, block-level tests, and staged integration.</p>
     </div>
 
     <article class="proj">
@@ -49,7 +49,7 @@
       <a class="proj-thumb" href="riscv.html" aria-label="RISC-V Processor"><img src="assets/diagrams/thumb-riscv.svg" alt=""></a>
       <div class="proj-body"><span class="num">02 &middot; ECE 437 &middot; In progress</span>
         <h3><a href="riscv.html">RISC-V Processor</a></h3>
-        <p>A 32-bit RISC-V CPU in SystemVerilog. The single-cycle version is verified, and the five-stage pipeline's forwarding and hazard units pass their tests. The hardest bug was one no unit test caught.</p>
+        <p>A five-stage RISC-V pipeline in development, with forwarding, hazard handling, and a branch-prediction extension. Measured up to 1.29&times; faster mergesort execution than the single-cycle baseline and up to 45.3% lower CPI on a loop benchmark.</p>
         <ul class="tags"><li>SystemVerilog</li><li>QuestaSim</li><li>Vivado</li></ul>
         <a href="riscv.html">Open project &rarr;</a></div>
     </article>
@@ -57,7 +57,7 @@
       <a class="proj-thumb" href="gpu.html" aria-label="GPU Vertex Stage"><img src="assets/diagrams/thumb-gpu.svg" alt=""></a>
       <div class="proj-body"><span class="num">03 &middot; SoCET GPU &middot; In progress</span>
         <h3><a href="gpu.html">GPU Vertex Stage</a></h3>
-        <p>A fixed-point vertex pipeline for the Purdue SoCET GPU team: 4&times;4 matrix transforms, perspective division and screen-space conversion. The perspective-divide prototype passes 14 directed tests; the rest is in progress.</p>
+        <p>A fixed-point vertex pipeline for Purdue's SoCET GPU team, covering 4&times;4 matrix transforms, perspective division, and screen-space conversion. The perspective-divide prototype passes 14 directed tests; the remaining work is in progress.</p>
         <ul class="tags"><li>SystemVerilog</li><li>FPGA</li><li>Fixed point</li></ul>
         <a href="gpu.html">Open project &rarr;</a></div>
     </article>
@@ -65,7 +65,7 @@
       <a class="proj-thumb" href="console.html" aria-label="RetroCore Gaming Console"><img src="assets/diagrams/thumb-console.svg" alt=""></a>
       <div class="proj-body"><span class="num">04 &middot; Senior design &middot; In progress</span>
         <h3><a href="console.html">RetroCore Gaming Console</a></h3>
-        <p>A two-player spaceship game on a DE10-Nano: RISC-V soft core, tile-based graphics, an ESP32 controller interface, HDMI and a custom PCB. Team of four, and I'm the hardware lead.</p>
+        <p>A console in development for a two-player spaceship game, using a DE10-Nano, RISC-V soft core, tile-based graphics, an ESP32 controller interface, and HDMI, with a custom PCB planned. Role: hardware lead on a four-person team.</p>
         <ul class="tags"><li>DE10-Nano</li><li>ESP32</li><li>RISC-V</li><li>PCB</li></ul>
         <a href="console.html">Open project &rarr;</a></div>
     </article>

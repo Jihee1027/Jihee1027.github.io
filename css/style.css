@@ -286,3 +286,9 @@ details.secondary[open] > summary { margin-bottom: 12px; }
 .hub-card.quiet h3 { font-size: 1.05rem; }
 .hub-card.quiet p { font-size: .95rem; }
 .hub-card.quiet { grid-column: 1 / -1; }
+
+.struct-img { display: block; width: 100%; height: auto; margin: 0 0 14px; border: 1px solid var(--rule); background: #fff; }
+.node-tag { margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--rule); font-size: 14.5px; color: #2e3a40; }
+.node-tag span { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5d6a70; margin-bottom: 3px; }
+.fig-cap { margin: 22px 0 18px; font-size: 14px; line-height: 1.5; color: #5d6a70; }
+.fig-cap b { color: var(--ink, #1d2327); }

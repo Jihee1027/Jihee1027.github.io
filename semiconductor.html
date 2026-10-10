@@ -29,58 +29,49 @@
     <div>
       <p class="eyebrow">Study notes</p>
       <h1>Toward semiconductor process integration</h1>
-      <p class="lede measure">These are my study notes on how transistors and the process flow work, followed by how I would approach integration questions such as a Vth shift or a yield excursion. They reflect what I am learning and how I would work, not fab experience.</p>
+      <p class="lede measure">I am studying how process conditions shape transistor behavior and how those effects carry through to circuit performance and yield. My manufacturing internships taught me to connect evidence across process steps. These notes show how I would bring that approach to semiconductor process integration as I build on my coursework and independent study.</p>
     </div>
   </header>
 
   <section class="sec" id="transistors" style="padding-top:40px">
     <div class="sec-head"><div><span class="num">01</span><h2>Three transistor structures</h2></div>
-      <p>What I keep coming back to is that each step from planar to FinFET to GAA gave the gate more control over the channel, and also gave the process more dimensions to hold tight.</p></div>
-    <div class="cols3" style="margin-top:0">
-      <div class="col"><h3>Planar MOSFET</h3><p>A gate sits on top of a flat channel and switches current between source and drain. As channels got shorter the gate lost its grip on the channel, and leakage went up.</p></div>
-      <div class="col"><h3>FinFET</h3><p>The channel is a thin vertical fin and the gate wraps three of its sides. More of the channel is under the gate's control, so leakage drops. The fin's width and height now matter a great deal.</p></div>
-      <div class="col"><h3>Gate-all-around</h3><p>The gate wraps the channel on every side, and the channel becomes stacked nanosheets or nanowires. Control improves again, but the flow gets harder: a stack of alternating layers, then selective removal of the sacrificial ones.</p></div>
+      <p>Moving from planar MOSFETs to FinFETs and gate-all-around structures improves gate control over the channel. It also makes geometry and process control more demanding. I am interested in how those fabrication choices affect the finished device.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame raster"><img src="assets/images/semi-structures-lam.png" width="936" height="270" alt="Three transistor structures side by side: planar with the gate on top of a flat channel, FinFET with the gate wrapping a vertical fin, and gate-all-around with the gate surrounding stacked horizontal nanosheets. Source and drain are labeled on each."></div><figcaption><b>Fig. 1</b> Planar transistors vs. finFETs vs. gate-all-around. Source: Lam Research.</figcaption></figure>
+    <div class="cols3" style="margin-top:28px">
+      <div class="col"><h3>Planar MOSFET</h3><p>The gate sits above a flat channel and controls current between the source and drain. As the channel gets shorter, maintaining that control becomes harder, and short-channel effects can increase leakage.</p><p class="node-tag"><span>TSMC nodes</span>28 nm and earlier</p></div>
+      <div class="col"><h3>FinFET</h3><p>The channel forms a thin vertical fin, with the gate wrapping around three sides. This gives the gate better control over the channel. Fin width and height become important dimensions to control during fabrication.</p><p class="node-tag"><span>TSMC nodes</span>16 nm, N7, N5, N3</p></div>
+      <div class="col"><h3>Gate-all-around</h3><p>The gate surrounds the channel, which can take the form of stacked nanosheets or nanowires. This improves channel control while adding fabrication challenges, including forming alternating layers and selectively removing sacrificial material.</p><p class="node-tag"><span>TSMC nodes</span>N2 (nanosheet, volume production since 4Q25), N2P, A16</p></div>
     </div>
+    <p class="fig-cap">TSMC node labels follow TSMC&rsquo;s logic technology pages as I read them in October 2026: N7, N5 and N3 are listed as FinFET, and N2 and A16 as nanosheet. A13 and A12 are also described as nanosheet.</p>
     <p class="note" style="font-style:normal">Underneath all three is CMOS. CMOS logic uses complementary n-channel and p-channel devices. In an ideal static CMOS state there is no direct DC path from VDD to ground through both networks at once; real devices still have leakage.</p>
   </section>
 
   <section class="sec" id="flow">
-    <div class="sec-head"><div><span class="num">02</span><h2>The flow, in a few lines</h2></div>
-      <p>Semiconductor fabrication repeatedly uses deposition or oxidation, lithography, etch, implantation, anneal, cleaning, and planarization to build the device and interconnect layers. The exact sequence depends on the device architecture and integration scheme.</p></div>
-    <div class="cols3" style="margin-top:0">
-      <div class="col"><h3>FEOL</h3><p>Front end of line. This is where the transistors themselves are built: isolation, the gate, source and drain.</p></div>
-      <div class="col"><h3>MEOL</h3><p>Middle end of line. Contacts connect the transistors up to the first metal layer.</p></div>
-      <div class="col"><h3>BEOL</h3><p>Back end of line. Layers of metal wiring and insulating dielectric connect everything on the chip.</p></div>
-    </div>
-    <p class="note">Written from my own study. I would rather say I am still learning a detail than guess at it.</p>
+    <div class="sec-head"><div><span class="num">02</span><h2>Fabrication flow at a glance</h2></div>
+      <p>A chip is built through repeated cycles of deposition or oxidation, lithography, etch, implantation, anneal, cleaning, and planarization. The sequence depends on the device and integration scheme. Understanding how each step affects the next is what draws me to process integration.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/semi-flow.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/semi-flow.svg" width="1040" height="470" alt="Fabrication repeats deposition or oxidation, lithography, etch, implantation, anneal, cleaning and planarization, layer by layer. The chip is built bottom to top: front end of line makes the transistors, middle end of line adds contacts to the first metal layer, and back end of line adds the metal and dielectric wiring layers."></a></div><figcaption><b>Fig. 2</b> The repeated steps and the three parts of the flow, from the transistors up to the wiring.</figcaption></figure>
   </section>
 
   <section class="sec" id="vth">
     <div class="sec-head"><div><span class="num">03</span><h2>When Vth shifts</h2></div>
-      <p>Threshold voltage (Vth) is an extracted device parameter associated with the onset of strong channel conduction. Its numerical value depends on the device and the extraction method. If Vth shifts, I would first determine the pattern before assigning a process cause.</p></div>
-    <div class="cols3" style="margin-top:0">
-      <div class="col"><h3>Find the pattern first</h3><p>Which product, device type, lot, wafer, tool or chamber is affected, and when the shift began. I would not name a process cause until I could describe the pattern.</p></div>
-      <div class="col"><h3>Correlate, then list contributors</h3><p>I would correlate the affected population with inline metrology, electrical data, process history, and recent equipment or recipe changes. Depending on the pattern, contributors could include gate dielectric thickness or EOT, interface quality, the work-function metal stack, channel doping or activation, CD and geometry, and thermal history.</p></div>
-      <div class="col"><h3>Contain, compare, then test</h3><p>Contain the affected material according to fab procedure, compare affected lots with healthy references, look for tool, chamber or time commonality, and review recent recipe, equipment, material, and maintenance changes. Once the likely contributor is narrowed, use monitor material, engineering splits, or a DOE with the responsible process module to test a defined hypothesis.</p></div>
-    </div>
+      <p>Threshold voltage (Vth) is an extracted device parameter associated with the onset of strong channel conduction. Its value depends on the device and extraction method. If Vth shifts, I would start by identifying which lots, wafers, devices, or chambers are affected, then compare electrical results with inline measurements and process history. That pattern would guide the next check.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/semi-vth.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/semi-vth.svg" width="1040" height="400" alt="Four steps: find the pattern, correlate with metrology, electrical data and process history, contain and compare with healthy references, then test a hypothesis with monitor material, splits or a DOE. Possible contributors, suspected until the evidence supports them: gate dielectric thickness or EOT, interface quality, work-function metal, channel doping, CD and geometry, thermal history."></a></div><figcaption><b>Fig. 3</b> How I would work through a Vth shift. Orange marks suspected contributors until the evidence supports them.</figcaption></figure>
   </section>
 
   <section class="sec" id="chain">
     <div class="sec-head"><div><span class="num">04</span><h2>From process to system</h2></div>
-      <p>A process excursion does not stop at the process step where it began. Changes in dimensions, materials, interfaces or doping can shift device parameters such as threshold voltage, drive current, leakage and capacitance. Those device shifts can then appear downstream as changes in cell delay, power and timing margin. My digital-design projects give me context for that downstream side of the chain.</p></div>
-    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/semi-chain.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/semi-chain.svg" width="1040" height="400" alt="Four stacked levels, top to bottom. Process: critical dimension, material stack, interfaces, doping and resistance. Device: threshold voltage, drive current, leakage and capacitance. Circuit: cell delay, switching behavior, power and timing margin. Chip or system: frequency, power and functional margin. A conceptual relationship, not a deterministic fault tree."></a></div><figcaption><b>Fig. 1</b> A conceptual relationship from process to system, not a deterministic fault tree. A given variation does not necessarily affect every quantity listed.</figcaption></figure>
+      <p>A change in one process step can affect the steps that follow. Dimensions, materials, interfaces, and doping influence threshold voltage, drive current, leakage, and capacitance. Those device characteristics can affect circuit delay, power, and timing margin. My digital hardware projects help me connect the manufacturing question to the circuit and system behavior it can eventually affect.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/semi-chain.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/semi-chain.svg" width="1040" height="280" alt="Four levels. Process: CD, material stack, interfaces, doping, resistance. Device: Vth, drive current, leakage, capacitance. Circuit: cell delay, switching, power, timing margin. Chip or system: frequency, power, functional margin. A conceptual relationship, not a deterministic fault tree."></a></div><figcaption><b>Fig. 4</b> A conceptual relationship from process to system. A given variation does not necessarily affect every quantity listed.</figcaption></figure>
   </section>
 
   <section class="sec" id="apply">
-    <div class="sec-head"><div><span class="num">05</span><h2>How I would apply my work</h2></div>
-      <p>This is how I would approach the job, based on how I worked in my manufacturing internships.</p></div>
-    <div class="cols3" style="margin-top:0">
-      <div class="col"><h3>A new product or a transfer</h3><p>In my internship I qualified a change across several production lots with a sampling plan and judged it on the downstream result. In a transfer I would start from the same question: does the receiving line behave like the source line, and how would I know?</p></div>
-      <div class="col"><h3>A yield excursion</h3><p>I would do what I did with defect trends: find when it started, then split by lot, tool, chamber and time to see what the affected material has in common, and read that together with electrical and inline data.</p></div>
-      <div class="col"><h3>Planning an experiment</h3><p>Start from a known baseline, define the factors and measurable responses, use controlled splits or DOE as appropriate, and check interactions when they matter. Then verify that the result holds across the intended process window. That is how I approached the laser DOE.</p></div>
-      <div class="col"><h3>Working across teams</h3><p>In my internship I sent one daily report to Process, Equipment, Production and Quality, with a root cause status and the next action. I would expect to do the same with device, lithography, etch and thin films.</p></div>
-      <div class="col"><h3>Shifts and on-call</h3><p>As an intern I worked nights and weekends, every weekend for a stretch, and a lot of overtime when the line needed it.</p></div>
-      <div class="col"><h3>What I want to learn first</h3><p>How electrical test and reliability data connect back to a specific process step, and how experienced engineers read them. I would start by asking.</p></div>
+    <div class="sec-head"><div><span class="num">05</span><h2>Bringing manufacturing experience to process integration</h2></div>
+      <p>My experience comes from battery electrode manufacturing. It taught me to follow a problem across process steps, test a defined change, and check the downstream result. The examples below describe how I would apply those habits while learning semiconductor processes.</p></div>
+    <div class="cols2" style="margin-top:0">
+      <div class="col"><h3>A new product or a transfer</h3><p>During my internship, I supported change qualification across multiple production lots using a sampling plan and downstream review. For a product transfer, I would start by defining what needs to match between the source and receiving lines, then use comparable process and electrical data to evaluate the result.</p></div>
+      <div class="col"><h3>Planning an experiment</h3><p>The laser DOE taught me to start from a known baseline, define the factors and measurable responses, and check whether the result holds across operating conditions. I would use the same discipline when planning controlled splits or a DOE with a process module, including relevant interactions and downstream trade-offs.</p></div>
+      <div class="col"><h3>Working across teams</h3><p>Daily internship reports kept Process, Equipment, Production, and Quality aligned on the evidence, investigation status, and next action. I would bring that same clarity to work with device and process-module teams. My manufacturing experience also includes nights and weekends in support of continuous production.</p></div>
+      <div class="col"><h3>Where I would start</h3><p>My first priority would be learning how the team connects electrical test, inline metrology, and reliability data to specific process steps. Reviewing real cases with experienced engineers would help me build that judgment and understand what evidence is needed before a change is qualified.</p></div>
     </div>
   </section>
   <nav class="pager wrap-in" aria-label="More"><a href="about.html"><span>Previous</span><strong>&larr; About</strong></a></nav>

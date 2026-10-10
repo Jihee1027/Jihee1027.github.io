@@ -1,0 +1,57 @@
+/* RISC-V Lab 6 diagram views; scoped to this page. */
+.datapath-section { scroll-margin-top: 100px; }
+.pipeline-stages { list-style: none; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); padding: 0; margin: 24px 0; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--paper); }
+.pipeline-stages li { padding: 20px 16px; border-left: 1px solid var(--rule); }
+.pipeline-stages li:first-child { border-left: 0; }
+.pipeline-stages b { display: block; color: var(--teal); font: 600 12px var(--sans); letter-spacing: .1em; }
+.pipeline-stages strong { display: block; margin: 6px 0; font: 500 20px var(--serif); }
+.pipeline-stages span { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.datapath-overview .fig-frame { background: #fff; padding: 12px; }
+.datapath-overview .fig-frame img { width: 100%; height: auto; display: block; min-width: 0; }
+.datapath-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.datapath-links a { font-size: 13px; border: 1px solid var(--rule); padding: 6px 12px; border-radius: 99px; text-decoration: none; }
+.datapath-links a:hover { border-color: var(--teal); }
+.datapath-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; align-items: start; }
+.datapath-card { min-width: 0; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: #fff; scroll-margin-top: 100px; }
+.datapath-card-copy { padding: 22px 24px 0; }
+.datapath-card h3 { margin: 6px 0 10px; font-size: 22px; }
+.datapath-card p { font-size: 15px; line-height: 1.6; margin: 0 0 18px; }
+.datapath-crop { display: block; padding: 0 14px 14px; background: #fff; }
+.datapath-crop img { display: block; width: 100%; height: auto; }
+.datapath-inspect { border-top: 1px solid var(--rule); }
+.datapath-inspect summary { padding: 12px 24px; color: var(--teal); cursor: pointer; font-size: 13px; font-weight: 500; }
+.datapath-scroll { max-height: 650px; overflow: auto; background: #fff; border-top: 1px solid var(--rule); }
+.datapath-scroll img { display: block; width: auto; min-width: 100%; max-width: none; height: auto; }
+.datapath-scroll:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; }
+@media (max-width: 860px) { .datapath-grid { grid-template-columns: 1fr; } .pipeline-stages { grid-template-columns: 1fr; } .pipeline-stages li { border-left: 0; border-top: 1px solid var(--rule); padding: 12px 16px; display: grid; grid-template-columns: 48px 110px 1fr; align-items: baseline; gap: 10px; } .pipeline-stages li:first-child { border-top: 0; } .pipeline-stages strong { font-size: 18px; margin: 0; } }
+@media (max-width: 440px) { .pipeline-stages li { grid-template-columns: 42px 1fr; } .pipeline-stages span { grid-column: 2; } .datapath-card-copy { padding: 18px 18px 0; } }
+@media print { .datapath-inspect, .datapath-links { display: none; } .datapath-card { break-inside: avoid; } }
+
+/* Lab 7 results and progressive detail. */
+.project-resources { display:flex; flex-wrap:wrap; gap:16px 24px; align-items:center; margin:24px 0 0; font-size:14px; }
+.project-detail { margin-top:20px; }
+.project-detail .datapath-grid { margin:28px 0 18px; }
+.lab7-highlights { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin:26px 0 32px; }
+.lab7-highlights > div { display:flex; gap:24px; align-items:center; padding:24px; border:1px solid var(--rule); border-radius:8px; background:var(--paper); }
+.lab7-highlights strong { color:var(--teal); font:500 42px var(--serif); white-space:nowrap; }
+.lab7-highlights span { color:var(--muted); font-size:14px; line-height:1.6; }
+.bench-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; }
+.bench-panel { min-width:0; }
+.bench-panel h3 { margin:0 0 8px; font-size:22px; }
+.bench-context { color:var(--muted); font-size:13px; margin:0 0 14px; }
+.bench-scroll { overflow-x:auto; }
+.bench-table { width:100%; min-width:390px; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums; }
+.bench-table th, .bench-table td { padding:12px 10px; text-align:right; border-bottom:1px solid var(--rule); white-space:nowrap; }
+.bench-table th:first-child { text-align:left; }
+.bench-table thead th { font-size:12px; color:var(--muted); font-weight:600; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+.bench-table tbody tr:last-child { background:var(--paper); }
+.bench-method { margin-top:22px; font-style:normal; font-size:13px; }
+@media (max-width:960px) { .bench-grid { grid-template-columns:1fr; } .lab7-highlights > div { display:block; } .lab7-highlights span { display:block; margin-top:8px; } }
+@media (max-width:600px) { .lab7-highlights { grid-template-columns:1fr; gap:14px; } .lab7-highlights > div { display:flex; padding:18px; gap:20px; } .lab7-highlights strong { font-size:36px; } }
+
+@media (max-width:600px) { .bench-table { min-width:0; font-size:12px; } .bench-table th, .bench-table td { padding:10px 5px; } .bench-table thead th { font-size:11px; } }
+
+/* All RISC-V content is visible without disclosure controls. */
+.project-expanded { margin-top:32px; padding:22px 0 10px; border-top:1px solid var(--rule); }
+.project-expanded > .expanded-heading { margin:0 0 18px; font:600 18px var(--sans); color:var(--ink); }
+.project-expanded > p { font-size:15px; line-height:1.6; }
