@@ -30,17 +30,30 @@
       <p class="eyebrow">ASIC design &middot; Purdue ECE 337 &middot; Three-person team</p>
       <h1>AHB Neural Network Accelerator</h1>
       <ul class="tags"><li>SystemVerilog</li><li>AHB</li><li>Design Compiler</li><li>QuestaSim</li></ul>
-      <p class="lede measure">A neural-network accelerator developed by a three-person team, using a weight-stationary systolic array and an AHB register interface. Contribution: systolic-array and activation-stage design, block verification, and integration debugging. The integrated design completed simulation, synthesis, and timing analysis.</p>
+      <p class="lede measure">A small neural-network accelerator chip design. Software writes weights and inputs over a standard on-chip bus (AHB), an 8&times;8 grid of multiply-accumulate units does the math, and an activation stage shapes the results.</p>
+      <p class="role"><b>My part</b>I designed the compute core: the 8&times;8 systolic array with its 64 pipelined processing elements, weight registers and partial-sum pipelines, and the activation stage with four modes. I verified each block and then the top level, and helped debug the integration. Teammates built the AHB subordinate, controller, SRAM buffer and top level.</p>
     </div>
   </header>
-  <div class="pdar" role="group" aria-label="Work, problem, action, result"><div class="pd"><span>Work</span><p>FP8 neural-network acceleration, with input and weight tests, a 128-input vector, numeric edge cases, AHB checks, and synthesis and timing review.</p></div><div class="pd"><span>Problem</span><p>The accelerator needed a standard bus interface, reduced-precision multiply-accumulate operations, and support for common activation functions.</p></div><div class="pd"><span>Action</span><p>Built the 8&times;8 weight-stationary array with 64 processing elements and the activation stage, tested each block and then the top level, and helped debug the integration.</p></div><div class="pd"><span>Result</span><p>The array and activation blocks were verified in simulation and ran inside the integrated design, which went through synthesis and timing analysis.</p></div></div>
-  <aside class="pi-note"><span class="pi-label">Process integration context</span><p>Synthesis and timing analysis connected RTL decisions with implementation constraints, including interconnect delay and timing margin. This provides circuit-level context for how device and interconnect variation can affect performance.</p></aside>
-  <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/asic-accelerator.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/asic-accelerator.svg" width="1040" height="600" alt="The accelerator separates control, weight loading, activation input and compute/output. Control: an AHB subordinate and registers talk to a controller state machine. Weights and inputs are written over AHB, staged in an input SRAM by the controller, then sent on a shared 64-bit systolic data bus with load_weights or load_inputs and a count. Compute: an 8 by 8 systolic array with FP8 multiply and add, a partial-sum output pipeline, bias and activation, then the controller writes an output SRAM that is read over AHB."></a></div><figcaption><b>Fig. 1</b> Four paths through the accelerator, drawn from the RTL: control, weights, activation input, and compute and output.</figcaption></figure>
-  <div class="cols3">
-    <div class="col"><span class="num">01</span><h3 style="margin-top:6px">Contribution</h3><p>The 8&times;8 systolic array with 64 pipelined processing elements, their weight registers and the partial-sum pipelines, and the activation stage with ReLU, Leaky ReLU, binary and identity modes.</p></div>
-    <div class="col"><span class="num">02</span><h3 style="margin-top:6px">Team responsibilities</h3><p>Teammates developed the AHB subordinate, controller and input state machine, SRAM data buffer, and top level. Integration debugging was shared across the team.</p></div>
-    <div class="col"><span class="num">03</span><h3 style="margin-top:6px">The main integration challenge</h3><p>Coordinating register controls, reset sequencing, and data widths across the AHB interface, controller, and array required more debugging than the array alone.</p></div>
-  </div>
+
+  <div class="stats"><div class="stat"><b>64 PEs</b><span>processing elements in the 8&times;8 weight-stationary array. Each one multiplies, adds the partial sum from above, and passes the result on.</span></div><div class="stat"><b>8 lanes</b><span>of 8-bit floating-point (FP8) values in each 64-bit word, unpacked and repacked around the activation stage.</span></div><div class="stat"><b>4 modes</b><span>ReLU, Leaky ReLU, binary and identity, selected by a 2-bit control for every lane.</span></div><div class="stat"><b>128 inputs</b><span>in the longest top-level test vector, plus NaN, infinity and bus-overrun error cases.</span></div></div>
+
+  <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/asic-accelerator-mine.svg" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/asic-accelerator-mine.svg" width="1040" height="600" alt="Four paths through the accelerator: control, weights, activation input, and compute and output. The weight registers, the unpack-to-8-lanes step, the 8 by 8 systolic array, the output pipeline and the bias and activation stage are marked as my work."></a></div><figcaption><b>Fig. 1</b> Four paths through the accelerator, drawn from the RTL: control, weights, activation input, and compute and output. The blocks I designed are marked.</figcaption></figure>
+  <p class="legend"><span><i class="mine"></i>My work</span><span><i></i>Teammates' work</span></p>
+
+  <section class="sec" id="evidence">
+    <div class="sec-head"><div><span class="num">01</span><h2>What was checked</h2></div><p>The array and activation blocks were verified in QuestaSim, then run inside the integrated design. The integrated design was synthesized in Synopsys Design Compiler and checked through timing analysis.</p></div>
+    <div class="tbl-wrap"><table class="evi"><thead><tr><th>Level</th><th>What the tests cover</th><th>Outcome</th></tr></thead><tbody>
+      <tr><td>Array block</td><td>Weights land in the right position for the given count. Inputs are staggered across the lanes. Multiply and add work for identity and normal cases in 8-bit floating point. The output pipeline aligns the last row and column, and the right 64 bits come out. Reset clears data mid-operation, and the done pulse arrives with the data.</td><td><span class="ok">Verified in simulation</span></td></tr>
+      <tr><td>Activation stage</td><td>All four modes on every lane, including negative zero, which the sign check treats as zero.</td><td><span class="ok">Verified in simulation</span></td></tr>
+      <tr><td>Top level</td><td>An identity-matrix test with zero bias. A full test with bias, several activations and different input and weight matrices. A 128-input vector. Error cases: AHB overrun, NaN and infinity.</td><td>In the team test plan</td></tr>
+      <tr><td>AHB interface</td><td>Register reads and writes, writes to read-only registers, too many weights or inputs, and writes while busy.</td><td>In the team test plan</td></tr>
+      <tr><td>Synthesis and timing</td><td>Synthesized in Design Compiler; timing analysis connected RTL choices to interconnect delay and timing margin.</td><td>Run on the integrated design</td></tr>
+    </tbody></table></div>
+    <div class="cols2">
+      <div class="col"><h3>Team responsibilities</h3><p>Teammates developed the AHB subordinate, controller and input state machine, SRAM data buffer, and top level. Integration debugging was shared across the team.</p></div>
+      <div class="col"><h3>The main integration challenge</h3><p>Coordinating register controls, reset sequencing, and data widths across the AHB interface, controller, and array required more debugging than the array alone.</p></div>
+    </div>
+  </section>
 
   <section class="sec" id="array">
     <div class="sec-head"><div><span class="num">02</span><h2>The systolic array datapath</h2></div>
@@ -48,7 +61,6 @@
     <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="assets/diagrams/png/asic-pe.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/diagrams/asic-pe.svg" width="1040" height="400" alt="Inside one processing element: the activation passes through an x_pipe register to the next element on the right, the stationary weight register and the activation feed an FP8 multiplier, an FP8 adder combines the product with the partial sum from above, and a partial-sum register passes the result down. Activations move right, partial sums move down, and weights stay in place."></a></div><figcaption><b>Fig. 2</b> One processing element and how elements connect. Activations move right, partial sums move down, and weights stay put.</figcaption></figure>
     <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame raster"><a href="assets/images/asic-array-schematic-full.png" target="_blank" rel="noopener" title="Open full size"><img src="assets/images/asic-array-schematic.png" width="1600" height="1694" alt="Datapath diagram of the eight by eight systolic array: input registers on the left, eight columns of processing elements with weight registers on top, output pipeline registers at the bottom feeding a data-out block"></a></div><figcaption><b>Fig. 3</b> Datapath of the array block. Weights load along the top, inputs enter on the left, and partial sums move down to the output pipeline. Click for the full-size image.</figcaption></figure>
   </section>
-
   <section class="sec" id="activation">
     <div class="sec-head"><div><span class="num">03</span><h2>The activation block</h2></div>
       <p>Designed the activation stage to unpack a 64-bit word into eight 8-bit minifloat values, apply the mode selected by a 2-bit control, and repack the results before output.</p></div>
@@ -59,33 +71,13 @@
       <div class="col"><h3>Handling signed zero</h3><p>The sign check also detects zero so negative zero is handled correctly. Verification covered this numeric-format edge case.</p></div>
     </div>
   </section>
-
-  <section class="sec" id="verify">
-    <div class="sec-head"><div><span class="num">04</span><h2>How the design was checked</h2></div>
-      <p>The team test plan covered top-level behavior and individual blocks. The checks below cover the systolic array and its surrounding interfaces.</p></div>
-    <div class="cols2" style="margin-top:0">
-      <div class="col"><h3>Array block</h3>
-        <ul class="list">
-          <li>Load weights: each weight lands in the right position based on the count.</li>
-          <li>Load inputs: inputs are staggered correctly across the lanes.</li>
-          <li>Multiply and sum: identity and normal cases in 8-bit minifloat, adding the previous sum down each column.</li>
-          <li>Output pipeline: the right alignment for the outputs of the last row and column.</li>
-          <li>Data out: the correct 64 bits from the pipelined outputs.</li>
-          <li>Reset clears data mid-operation, and the done pulse arrives with the data.</li>
-        </ul></div>
-      <div class="col"><h3>Top level and interface</h3>
-        <ul class="list">
-          <li>A basic test with an identity matrix, zero bias and a pass-through activation.</li>
-          <li>A full test with bias, several activations and various input and weight matrices.</li>
-          <li>A 128-input vector test, and error cases such as an AHB overrun, NaN and infinity.</li>
-          <li>AHB register reads and writes, writes to read-only registers, too many weights or inputs, and writes while busy.</li>
-        </ul></div>
-    </div>
-  </section>
-
   <section class="sec" id="flow">
-    <div class="sec-head"><div><span class="num">05</span><h2>Synthesis, timing analysis, and layout coursework</h2></div>
+    <div class="sec-head"><div><span class="num">04</span><h2>Synthesis, timing analysis, and layout coursework</h2></div>
       <p>The accelerator was simulated in QuestaSim, synthesized in Synopsys Design Compiler, and checked through timing analysis. Separate Cadence Innovus coursework used a provided USB design to study I/O placement, interconnect delay, and timing slack.</p></div>
+  </section>
+  <section class="where" id="carry">
+    <h2>What carries over to process integration</h2>
+    <p class="lead">Synthesis and timing analysis connected RTL decisions with implementation constraints, including interconnect delay and timing margin. That gave me circuit-level context for how device and interconnect variation can affect performance.</p>
   </section>
   <nav class="pager wrap-in" aria-label="More"><span></span><a class="next" href="riscv.html"><span>Next</span><strong>RISC-V Processor &rarr;</strong></a></nav>
 </div>
