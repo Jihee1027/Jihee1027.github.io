@@ -150,3 +150,10 @@ h3{font-size:18px;letter-spacing:-.012em}
 @media (max-width:960px){.hub-grid{grid-template-columns:1fr!important}}
 .num,.proj-body .num,.hub-card .num,.entry time{font:600 11.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
 .entry time{color:var(--muted)}
+/* Headings in Saira italic, body stays Inter */
+:root{--head:"Saira","Inter Display",Inter,"Segoe UI",system-ui,sans-serif}
+h1,h2,h3,.brand,.pager a strong,.stat b,.mw-results .r b,.contact h2,.st-row a b,.proj-body h3,.hub-card h3{font-family:var(--head);font-style:italic;letter-spacing:-.005em}
+h1,h2,.mw-results .r b,.stat b,.contact h2{font-weight:800}
+h3,.st-row a b,.pager a strong,.brand{font-weight:700}
+.hero h1{letter-spacing:-.01em;line-height:1.06}
+.mw-results .r b,.stat b{letter-spacing:-.01em}
