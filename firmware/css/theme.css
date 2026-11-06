@@ -157,3 +157,35 @@ h1,h2,.mw-results .r b,.stat b,.contact h2{font-weight:800}
 h3,.st-row a b,.pager a strong,.brand{font-weight:700}
 .hero h1{letter-spacing:-.01em;line-height:1.06}
 .mw-results .r b,.stat b{letter-spacing:-.01em}
+/* ===== Imported pages: card layout ===== */
+.stats4{grid-template-columns:repeat(4,minmax(0,1fr));margin:6px 0 0}
+.stats4 .stat b{font-size:28px;white-space:nowrap}
+.stats4 .stat span{font-size:14px}
+@media (max-width:960px){.stats4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.stats4{grid-template-columns:1fr}}
+.glance{background:var(--paper);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px 16px;position:relative;overflow:hidden}
+.glance::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--teal)}
+.glance h2{font:600 11.5px var(--sans);font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+ul.list li::before{width:6px;height:6px;border-radius:50%;top:.62em;background:var(--teal)}
+ul.list li{font-size:15.5px}
+.jump{position:sticky;top:62px;z-index:5;background:rgba(245,245,244,.94);backdrop-filter:blur(8px);border:0;border-bottom:1px solid var(--rule);padding:12px 0;margin-top:28px;gap:8px;font-size:13.5px}
+.jump a{background:var(--paper);border:1px solid var(--rule);border-radius:99px;padding:5px 12px;color:var(--ink);transition:border-color .15s}
+.jump a:hover{border-color:var(--teal);color:var(--ink)}
+.jump a span{font:600 11px var(--sans);color:var(--teal);margin-right:6px}
+.note{background:#ecebe8;border-left:3px solid #b9b7b1;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13.5px;color:#4a4f57}
+.status-list{background:var(--paper);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:6px 18px}
+.status-list li:last-child{border-bottom:0}
+details.secondary{background:var(--paper);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:6px 18px}
+details.secondary>summary{color:var(--teal)}
+.trio{margin-top:22px;gap:14px}
+.trio figure .fig-frame{border-radius:12px}
+.cols2>div:not(.col):not(.entry):not(.fig){background:var(--paper);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:20px 22px}
+.bg-h{color:var(--teal)}
+.fig-log .logbox{border-radius:12px}
+.legend{font-size:13px}
+.sec{scroll-margin-top:120px}
+.sec-head{margin-bottom:20px}
+.case-hero{padding-bottom:28px}
+.pdar{margin:22px 0 10px}
+.stats{margin-top:20px}
+.more a{font-weight:600}
