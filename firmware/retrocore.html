@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RetroCore controller link | Jihee Kim</title>
-<meta name="description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, and the test plan and results.">
+<meta name="description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, the test plan, and the FPGA, board and power work around it.">
 <meta property="og:title" content="RetroCore controller link | Jihee Kim">
-<meta property="og:description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, and the test plan and results.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<meta property="og:description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, the test plan, and the FPGA, board and power work around it.">
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg"><link rel="apple-touch-icon" href="img/favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Saira:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
   </div>
 </header>
 <main id="main">
+
 <div class="wrap case">
   <a class="crumb" href="projects.html">&larr; Projects</a>
   <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
@@ -42,6 +43,11 @@
     <div class="stat"><b>11 W</b><span>power budget at 5 V (2.20 A) with a 1.1 A fuse on the add-on board, from datasheets and bench tests.</span></div>
   </div>
 
+  <div class="trio">
+    <figure><div class="fig-frame raster"><a href="img/console-game-frame.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-game-frame.png" width="640" height="480" alt="A frame of the two-player space duel: a black-hole background, two ships, a laser, hearts, shield and laser bars, and a score."></a></div><p class="cap"><b>The game.</b> A frame of the two-player space duel, rendered on a PC from the same files the FPGA loads. It is not a photo of the monitor.</p></figure>
+    <figure><div class="fig-frame raster"><a href="img/console-pcb-3d-top.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-pcb-3d-top.png" width="1200" height="795" alt="KiCad 3D render of the add-on board from above: green two-layer board with the ESP32 module, USB-C connector, buttons, rotary encoder, audio amplifier and two controller headers."></a></div><p class="cap"><b>The add-on PCB.</b> KiCad 3D render of Rev A, 107 &times; 69 mm, two layers, 76 parts, 146 vias.</p></figure>
+    <figure><div class="fig-frame raster"><a href="img/console-cad-exploded.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-cad-exploded.png" width="1500" height="750" alt="Exploded CAD view of the console enclosure showing the top shell, speaker, add-on PCB, DE10-Nano board and bottom shell."></a></div><p class="cap"><b>The enclosure.</b> Exploded CAD view, drawn from the real add-on board dimensions and the 84.4 mm speaker.</p></figure>
+  </div>
   <section class="sec" id="path">
     <div class="sec-head"><div><span class="num">01</span><h2>How the input gets from thumb to screen</h2></div><p>Each controller reads its joystick every 10 ms and broadcasts a packet every 20 ms. The hub collects both players and sends one fixed-size frame to the FPGA on its own 20 ms loop.</p></div>
     <figure class="fig"><div class="fig-frame raster"><a href="img/console-firmware.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-firmware.png" width="1700" height="975" alt="Flow charts of the controller firmware, which reads the joystick and buttons and sends an ESP-NOW packet every 20 ms, and the hub firmware, which receives the packets, checks a 200 ms timeout, turns the stick into directions, and sends a 12-byte SPI frame to the FPGA every 20 ms." loading="lazy"></a></div><figcaption><b>Fig. 1</b> Controller firmware (two boards) and hub firmware. ESP-NOW broadcast on channel 1 at 50 packets a second, then a 12-byte SPI frame to the FPGA.</figcaption></figure>
@@ -91,6 +97,20 @@
     </div>
   </section>
 
+  
+
+  <section class="sec" id="soc">
+    <div class="sec-head"><div><span class="num">FPGA</span><h2>The FPGA design: CPU, graphics and audio</h2></div><p>In one week I went from placeholder modules to a whole SoC that compiles and simulates: a RISC-V core, bus, RAM, graphics, audio, controller input registers and clocks. The CPU writes the graphics through one memory map, and the video side reads on the pixel clock. The display path is implemented: pixel counters and sync generation feed the board's HDMI transmitter at 25.195 MHz.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame raster"><a href="img/console-rtl-core.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-rtl-core.png" width="1700" height="975" alt="Pipeline diagram of the RISC-V core with fetch, decode, execute, memory and write-back stages, a branch predictor, forwarding and a hazard unit"></a></div><figcaption><b>Fig. 3</b> The soft core: a five-stage RV32I pipeline with forwarding, a load-use hazard unit and a 32-entry branch target buffer. It reuses my teammate's control unit, ALU and register file.</figcaption></figure>
+    <div class="cols3">
+      <div class="col"><span class="num">A</span><h3 style="margin-top:6px">CPU</h3><p>A five-stage pipeline, because the FPGA's block RAM returns data one clock after the address. The simulator runs 40 programs against an instruction-set model and passes all 321 checks with exact cycle counts. Cycles per instruction are about 1.13.</p></div>
+      <div class="col"><span class="num">B</span><h3 style="margin-top:6px">Graphics</h3><p>An 8&times;8 tile background, a sprite engine with line buffers, and a 256-color palette. The sprite engine now holds 1,024 sprites and can zoom 16&times;16 and add glow colors.</p></div>
+      <div class="col"><span class="num">C</span><h3 style="margin-top:6px">One clock</h3><p>The CPU, sprite engine and video now run from one PLL, so no synchronizers are needed between them. Registering the branch redirect shortened the critical path and cost one extra bubble on a mispredict. Net speed is about 1.9&times;.</p></div>
+    </div>
+    <div class="cols2">
+      <div class="col"><h3>A bug Quartus found, not the simulator</h3><p>Connecting the background index straight to the palette address made Quartus build a 16,384&times;8 RAM out of about 131,000 flip-flops instead of block RAM. I gated the address and added a block-RAM check to the build script so it is caught automatically. An earlier RAM initialization file caused the same problem.</p></div>
+    </div>
+  </section>
   <section class="sec" id="board">
     <div class="sec-head"><div><span class="num">06</span><h2>The add-on board and power</h2></div><p>The hub lives on a two-layer add-on PCB that plugs onto the FPGA board. I drew the schematic, directed the layout and checked every version in KiCad. Placement and routing scripts were generated with Claude's help.</p></div>
     <figure class="fig"><div class="fig-frame raster"><a href="img/console-pcb-3d-top.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-pcb-3d-top.png" width="1200" height="795" alt="KiCad 3D render of the add-on board: ESP32 module with antenna at the left edge, USB-C power, buttons, rotary encoder, I2S amplifier and two controller ports." loading="lazy"></a></div><figcaption><b>Fig. 3</b> Rev A, about 107 &times; 69 mm, 76 parts. Design-rule findings went from 97 to 0 errors with 3 intentional warnings. The final check and a staff review are still to come before ordering.</figcaption></figure>
@@ -98,8 +118,53 @@
       <div class="col"><h3>Found by measuring the file</h3><p>Measuring the routed board showed one I2S line twice as long as the other two (150 mm against 80 mm). Reading the controller schematic showed the I2C header on the wrong ESP32 pins and a regulator that cannot hold 3.3 V as the battery drains.</p></div>
       <div class="col"><h3>Power budget</h3><p>FPGA board 1.40 A, ESP32 hub 0.50 A and audio 0.30 A: 2.20 A at 5 V, or 11.00 W, with a 1.1 A fuse on the add-on board.</p></div>
     </div>
-  </section>
+  <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame raster"><a href="img/console-power.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-power.png" width="1800" height="794" alt="Power diagram: a 5 volt DC adapter feeds the DE10-Nano and the add-on board, with a fuse, a 3.3 volt regulator and loads; each controller has a USB-C charger, a Li-Po cell and a regulator"></a></div><figcaption><b>Fig. 6</b> Power budget: DE10-Nano 1.40 A, ESP32 receiver 0.50 A and audio 0.30 A, 2.20 A at 5 V in total (11.00 W).</figcaption></figure></section>
 
+  
+
+  <section class="sec" id="evidence">
+    <div class="sec-head"><div><span class="num">All results</span><h2>Results and where they come from</h2></div><p>Numbers are from simulation logs, Quartus reports and bench measurements between Oct 15 and Oct 25, 2026. Open items are in the same table as the results.</p></div>
+    <div class="tbl-wrap"><table class="evi"><thead><tr><th>Check</th><th>Result</th><th>Source</th></tr></thead><tbody>
+      <tr><td>Whole-SoC simulation</td><td><span class="ok">Errors: 0</span>, warnings: 1, at 100.78 MHz. The run took 24 min 38 s.</td><td class="src">Questa, soc_core.sim, Oct 19</td></tr>
+      <tr><td>CPU verification</td><td><span class="ok">321 checks pass</span> over 40 programs. Exact cycle counts match the cycle model.</td><td class="src">cpu.sim</td></tr>
+      <tr><td>FPGA size</td><td>2,764 / 41,910 ALMs (7%), 3,835 registers, 116 / 553 RAM blocks, 0 / 112 DSP blocks.</td><td class="src">Quartus fitter summary, Oct 21</td></tr>
+      <tr><td>Timing at 100.78 MHz</td><td><span class="open">Open.</span> Setup slack &minus;0.306 ns (total negative slack &minus;5.734 ns). The other PLL output has +5.970 ns of setup slack, and hold slack is +0.283 ns.</td><td class="src">Quartus Timing Analyzer, slow 100 &deg;C model</td></tr>
+      <tr><td>Board bring-up</td><td><span class="ok">JTAG works</span> after I replaced a bad USB cable. An ESP32 test pattern walks one LED across the 7 button bits every 0.24 s.</td><td class="src">Bench test, Oct 19&ndash;20</td></tr>
+      <tr><td>Controller link</td><td>Controller &rarr; hub &rarr; FPGA &rarr; screen <span class="ok">works</span>, and the joystick moves on the HDMI image. <span class="open">Open:</span> the signal sometimes drops, and packet loss, reconnect time and two-player play are not measured yet.</td><td class="src">Bench test, Oct 24</td></tr>
+      <tr><td>Audio prototype</td><td>Notes within 1% of target (522, 656, 783, 1050 Hz for 523, 659, 784, 1047 Hz), but mains hum at about &minus;53 dBFS and only about 0.25 W. This is why I switched to an I2S amplifier.</td><td class="src">Breadboard test, phone recording</td></tr>
+      <tr><td>Add-on PCB</td><td>Design-rule check went from 97 findings to 0 errors with 3 intentional warnings at Rev A. <span class="open">Open:</span> rerun the check on the final file and get a staff review before ordering.</td><td class="src">KiCad DRC, Oct 22</td></tr>
+      <tr><td>Power budget</td><td>1.40 A + 0.50 A + 0.30 A = 2.20 A at 5 V (11.00 W), with a 1.1 A fuse.</td><td class="src">Calculation from datasheets and tests</td></tr>
+    </tbody></table></div>
+    <figure class="fig-log"><pre class="logbox"><span class="d"># retrocore.fit.summary  (selected lines)</span>
+Fitter Status : Successful - Wed Oct 21 00:19:09 2026
+Family : Cyclone V
+Device : 5CSEBA6U23I7
+Logic utilization (in ALMs) : <span class="h">2,764 / 41,910 ( 7 % )</span>
+Total registers : 3835
+Total block memory bits : 946,176 / 5,662,720 ( 17 % )
+Total RAM Blocks : 116 / 553 ( 21 % )
+Total DSP Blocks : 0 / 112 ( 0 % )
+Total PLLs : 1 / 6 ( 17 % )
+
+<span class="d"># retrocore.sta.summary  (selected lines, Slow 1100mV 100C Model)</span>
+Setup 'general[1].gpll~PLL_OUTPUT_COUNTER|divclk'   Slack : <span class="w">-0.306</span>   TNS : -5.734
+Setup 'general[0].gpll~PLL_OUTPUT_COUNTER|divclk'   Slack :  5.970   TNS : 0.000
+Hold  'general[1].gpll~PLL_OUTPUT_COUNTER|divclk'   Slack :  0.283
+Hold  'general[0].gpll~PLL_OUTPUT_COUNTER|divclk'   Slack :  0.458</pre><figcaption class="cap"><b>Fig. 1</b> Quartus reports for the full design, Oct 21. The &minus;0.306 ns line is the 100.78 MHz PLL output and is my main open hardware issue.</figcaption></figure>
+  </section>
+  
+
+  <section class="sec" id="owners">
+    <div class="sec-head"><div><span class="num">Team</span><h2>Who built what</h2></div><p>The system block diagram shows the whole console. The table says which parts are mine and which came from teammates.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame raster"><a href="img/console-bd.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-bd.png" width="1800" height="1009" alt="System block diagram: two ESP32 controllers send ESP-NOW to an ESP32 hub on the add-on PCB, which sends SPI to the DE10-Nano FPGA; HDMI goes through the ADV7513 to the monitor; I2S audio goes to a MAX98357A amplifier and speaker; USB-C powers the add-on board"></a></div><figcaption><b>Fig. 2</b> System block diagram, drawn from our KiCad files and RTL. Interface types and bus widths are labeled on each line.</figcaption></figure>
+    <div class="tbl-wrap"><table class="evi"><thead><tr><th>Part</th><th>Who</th></tr></thead><tbody>
+      <tr><td>FPGA SoC: pipeline, bus, RAM, graphics, audio, clocks, SPI receiver</td><td><b>Mine.</b> It reuses a teammate's control unit, ALU, register file and PC logic.</td></tr>
+      <tr><td>Controller boards, schematic and firmware</td><td>Teammates.</td></tr>
+      <tr><td>Hub receiver firmware (ESP-NOW to SPI)</td><td><b>Mine to find and test.</b> I found that the receiver code was missing, had it written with AI assistance, then flashed and tested it on the boards.</td></tr>
+      <tr><td>Add-on PCB: schematic, layout, checks</td><td><b>Mine.</b> Placement and routing scripts were generated with Claude's help; I checked every version in KiCad.</td></tr>
+      <tr><td>Enclosure CAD, power budget, review slides</td><td><b>Mine</b>, with the team's inputs.</td></tr>
+    </tbody></table></div>
+  </section>
   <section class="sec" id="open">
     <div class="sec-head"><div><span class="num">07</span><h2>Still open</h2></div><p>What I am working on next for the link.</p></div>
     <div class="cols3" style="margin-top:0">
@@ -111,6 +176,7 @@
   <p class="note">Team of four. Controller boards, their schematics and firmware, and the CPU's control unit, ALU and register file are teammates' work. Status as of early November 2026.</p>
   <nav class="pager wrap-in" aria-label="More"><a href="projects.html"><span>Back</span><strong>&larr; Projects</strong></a><a class="next" href="embedded.html"><span>Next</span><strong>Embedded C projects &rarr;</strong></a></nav>
 </div>
+
 </main>
 <footer class="site-footer">
   <div class="wrap">
