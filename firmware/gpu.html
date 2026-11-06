@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPU Vertex Stage | Jihee Kim</title>
+<meta name="description" content="A fixed-point GPU vertex stage verified against a bit-accurate Python model.">
+<meta property="og:title" content="GPU Vertex Stage | Jihee Kim">
+<meta property="og:description" content="A fixed-point GPU vertex stage verified against a bit-accurate Python model.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="vision.html"><strong>Vision Engineering</strong><span>LG Energy Solution, 2025&ndash;26</span></a><a href="process.html"><strong>Process Technology</strong><span>LG Energy Solution, 2026</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="retrocore.html"><strong>RetroCore controller link</strong><span>Senior design, firmware and test</span></a><a href="embedded.html"><strong>Embedded C projects</strong><span>ECE 362 robot, balloon payload</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, verification</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, verification</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#education"><strong>Education</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)"><div><p class="eyebrow">Purdue SoCET &middot; BIRDY GPU &middot; Team of three <span class="pill">In progress</span></p><h1>GPU Vertex Stage</h1><ul class="tags"><li>SystemVerilog</li><li>Python</li><li>Fixed point</li><li>Vivado</li></ul><p class="lede measure">The first stage of a small FPGA GPU: it turns each 3D triangle into 2D screen coordinates in fixed-point math. Most of my work was making it smaller without breaking it, and proving that with tests.</p><p class="role"><b>My part</b>I cut the stage from 40 to 13 DSP slices, added the clipping stage, ran the top-level verification and built the FPGA test harness. A teammate wrote the first version of the shared multiplier; I finalized and re-integrated it.</p></div></header>
+  <div class="stats"><div class="stat"><b>761 / 761</b><span>top-level checks pass across 15 testbenches, compared with a bit-accurate Python model.</span></div><div class="stat"><b>40 &rarr; 13</b><span>DSP slices, changing one block at a time and re-running the tests after every change.</span></div><div class="stat"><b>+0.388 ns</b><span>setup slack at 125 MHz after routing in Vivado: timing is met.</span></div><div class="stat"><b>&le; 1.25 px</b><span>screen position error against the Python model, unchanged by the DSP reduction.</span></div></div>
+  <section class="sec" id="pipe"><div class="sec-head"><div><span class="num">01</span><h2>The pipeline</h2></div><p>A triangle goes in as three vertices and comes out as screen coordinates.</p></div><figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="img/gpu-pipeline-mine.svg" target="_blank" rel="noopener" title="Open full size"><img src="img/gpu-pipeline-mine.svg" width="1040" height="380" alt="Vertex pipeline: input FIFO, controller, transform, clip, divide by w, screen space; my blocks marked." loading="lazy"></a></div><figcaption><b>Fig. 1</b> The vertex stage, with my blocks marked.</figcaption></figure></section>
+  <section class="sec" id="verify"><div class="sec-head"><div><span class="num">02</span><h2>How it was verified</h2></div><p>Every change was checked against the same reference.</p></div><div class="cols3" style="margin-top:0"><div class="col"><h3>A bit-accurate model</h3><p>A Python model computes the exact fixed-point result, so each testbench compares bits, not approximations.</p></div><div class="col"><h3>Re-run after every change</h3><p>Each DSP reduction was merged one at a time with the full suite re-run, so a failure pointed at one change.</p></div><div class="col"><h3>What is still open</h3><p>The stage has not run on the board yet: the lab PCs do not detect it, and the harness was built at 100 MHz.</p></div></div></section>
+  <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="img/gpu-status.svg" target="_blank" rel="noopener" title="Open full size"><img src="img/gpu-status.svg" width="1040" height="150" alt="Status: vertex stage done, DSP reduction done, clipping done, FPGA test blocked, rasterizer interface next." loading="lazy"></a></div><figcaption><b>Fig. 2</b> Where the stage stands.</figcaption></figure>
+  <nav class="pager wrap-in" aria-label="More"><a href="riscv.html"><span>Previous</span><strong>&larr; RISC-V Processor</strong></a><a class="next" href="asic.html"><span>Next</span><strong>AHB Neural Network Accelerator &rarr;</strong></a></nav>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>

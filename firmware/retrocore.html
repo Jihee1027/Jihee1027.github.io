@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RetroCore controller link | Jihee Kim</title>
+<meta name="description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, and the test plan and results.">
+<meta property="og:title" content="RetroCore controller link | Jihee Kim">
+<meta property="og:description" content="How the RetroCore wireless controller link works, the three root causes behind its dropouts, and the test plan and results.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="vision.html"><strong>Vision Engineering</strong><span>LG Energy Solution, 2025&ndash;26</span></a><a href="process.html"><strong>Process Technology</strong><span>LG Energy Solution, 2026</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="retrocore.html"><strong>RetroCore controller link</strong><span>Senior design, firmware and test</span></a><a href="embedded.html"><strong>Embedded C projects</strong><span>ECE 362 robot, balloon payload</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, verification</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, verification</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#education"><strong>Education</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)">
+    <div>
+      <p class="eyebrow">Senior design &middot; ECE 49022 &middot; Team 18 &middot; Fall 2026 <span class="pill">In progress</span></p>
+      <h1>RetroCore: the wireless controller link</h1>
+      <ul class="tags"><li>ESP32</li><li>ESP-NOW</li><li>Embedded C</li><li>SPI</li><li>DE10-Nano FPGA</li><li>KiCad</li></ul>
+      <p class="lede measure">RetroCore is a two-player game console built around an FPGA board. Two wireless ESP32 controllers send their input to an ESP32 hub, and the hub passes it to the FPGA over SPI. This page follows that link: how it works, why it dropped out, how I tested it, and what is still open.</p>
+      <p class="role"><b>My part</b>I am the hardware lead on a team of four. I defined the electrical architecture and the 11 W power budget, brought up the boards, traced the controller dropouts to three causes, designed the add-on PCB and built the FPGA side. The controller boards and their firmware are my teammates' work. The hub's receive code was written with AI assistance; I found it was missing, then flashed and tested it on the boards.</p>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b>12 bytes</b><span>per SPI frame from hub to FPGA every 20 ms (50 Hz), at 1 MHz in SPI mode 0. The FPGA keeps a frame only if exactly 12 bytes arrive.</span></div>
+    <div class="stat"><b>200 ms</b><span>timeout: a controller the hub has not heard from is marked disconnected and its buttons are released.</span></div>
+    <div class="stat"><b>3 causes</b><span>behind the dropouts, separated and tested one at a time. Two are fixed and one is still open.</span></div>
+    <div class="stat"><b>11 W</b><span>power budget at 5 V (2.20 A) with a 1.1 A fuse on the add-on board, from datasheets and bench tests.</span></div>
+  </div>
+
+  <section class="sec" id="path">
+    <div class="sec-head"><div><span class="num">01</span><h2>How the input gets from thumb to screen</h2></div><p>Each controller reads its joystick every 10 ms and broadcasts a packet every 20 ms. The hub collects both players and sends one fixed-size frame to the FPGA on its own 20 ms loop.</p></div>
+    <figure class="fig"><div class="fig-frame raster"><a href="img/console-firmware.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-firmware.png" width="1700" height="975" alt="Flow charts of the controller firmware, which reads the joystick and buttons and sends an ESP-NOW packet every 20 ms, and the hub firmware, which receives the packets, checks a 200 ms timeout, turns the stick into directions, and sends a 12-byte SPI frame to the FPGA every 20 ms." loading="lazy"></a></div><figcaption><b>Fig. 1</b> Controller firmware (two boards) and hub firmware. ESP-NOW broadcast on channel 1 at 50 packets a second, then a 12-byte SPI frame to the FPGA.</figcaption></figure>
+    <div class="cols3">
+      <div class="col"><span class="num">A</span><h3 style="margin-top:6px">Controller</h3><p>An ESP32-S2 or C6 reads X and Y on its ADC and debounces the buttons. Every 20 ms it broadcasts a 13-byte packet: a magic word (&ldquo;RCP1&rdquo;), a sequence number, X, Y and the buttons.</p></div>
+      <div class="col"><span class="num">B</span><h3 style="margin-top:6px">Hub</h3><p>The receive callback runs in the Wi-Fi task. It checks the magic word, maps the sender's MAC address to player 1 or 2, counts gaps in the sequence number as lost packets, and copies the data inside a critical section so the main loop never reads half an update.</p></div>
+      <div class="col"><span class="num">C</span><h3 style="margin-top:6px">FPGA</h3><p>The SPI receiver samples the bus on the 50 MHz system clock through synchronizers, and commits a frame only when chip-select rises after exactly 12 bytes. A short or long frame is dropped, so a bad frame never reaches the game.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="dropout">
+    <div class="sec-head"><div><span class="num">02</span><h2>Why the controllers dropped out</h2></div><p>The link worked for a while and then stopped, or the player drifted down on its own. One fix would not have explained both, so I followed the data path end to end and looked for each cause separately.</p></div>
+    <figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="img/mw-rootcause.svg" target="_blank" rel="noopener" title="Open full size"><img src="img/mw-rootcause.svg" width="1040" height="440" alt="Symptom: controller input drops out or drifts down. Three causes: no receive path on the hub (fixed), joystick Y on an ADC2 pin (open), no lost-packet handling (fixed with a 200 ms timeout)." loading="lazy"></a></div><figcaption><b>Fig. 2</b> The three causes, the evidence for each, the fix and its status. Amber means a likely cause I have not confirmed on the board yet.</figcaption></figure>
+    <div class="pdar" role="group" aria-label="Work, problem, action, result"><div class="pd"><span>Work</span><p>The controller-to-FPGA link and the joystick behavior on screen, assigned to me in Week 10.</p></div><div class="pd"><span>Problem</span><p>Input dropped out at random, and the player sometimes moved down without a press.</p></div><div class="pd"><span>Action</span><p>Read the hub and FPGA receive paths, separated three causes, fixed two and tested them on the boards.</p></div><div class="pd"><span>Result</span><p>Controller to hub to FPGA to screen works, and the joystick moves on the HDMI image. The ADC2 fix and range tests are still open.</p></div></div>
+  </section>
+
+  <section class="sec" id="stick">
+    <div class="sec-head"><div><span class="num">03</span><h2>Turning a raw stick into a direction</h2></div><p>A joystick does not sit at the middle of its range, and moving it up also moves X. The hub firmware handles both before it sends a direction to the FPGA. The numbers come from our controllers and the hub code.</p></div>
+    <div class="cols3" style="margin-top:0">
+      <div class="col"><h3>Center tracking</h3><p>The center measured at boot (about 666) was not where the stick rested later (about 592), so the hub tracks the resting center instead of trusting one boot reading.</p></div>
+      <div class="col"><h3>Hysteresis</h3><p>A direction turns on and off at different points (Y on at 200 and off at 120, X on at 100 and off at 60), so a stick resting near a threshold does not flicker.</p></div>
+      <div class="col"><h3>Cross-talk</h3><p>Pushing up moved X by +400 to +670 on its own. A rule ignores X in that case, so pressing up does not also register as a turn.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="tests">
+    <div class="sec-head"><div><span class="num">04</span><h2>Test plan and results</h2></div><p>I wrote 24 testable requirements for the console, each with an oscilloscope or logic-analyzer test plan. The table shows the ones for the controller link and the board, with what has been measured so far.</p></div>
+    <div class="tbl-wrap"><table class="evi"><thead><tr><th>Check</th><th>How</th><th>Result</th></tr></thead><tbody>
+      <tr><td>Board bring-up</td><td>JTAG programming; an ESP32 test pattern walks one LED across the 7 button bits every 0.24 s</td><td><span class="ok">Pass.</span> JTAG worked after I replaced a bad USB cable.</td></tr>
+      <tr><td>End-to-end input</td><td>Controller &rarr; hub &rarr; FPGA &rarr; HDMI on the bench</td><td><span class="ok">Pass.</span> The joystick moves the player on screen.</td></tr>
+      <tr><td>Frame check</td><td>FPGA receiver accepts only exactly 12 bytes per chip-select</td><td><span class="ok">Pass.</span> The old one-byte stub was dropped every time, which is how the missing receive path showed up.</td></tr>
+      <tr><td>Stale input</td><td>Silence a controller; the hub should release its buttons after 200 ms</td><td><span class="ok">Implemented.</span> Timing not yet measured on the scope.</td></tr>
+      <tr><td>Drift down with Wi-Fi on</td><td>Move Y to an ADC1 pin, then repeat with the radio on</td><td><span class="open">Open.</span> Likely cause found in the code, not confirmed on the board.</td></tr>
+      <tr><td>Packet loss at 5 m</td><td>Count sequence-number gaps at the hub; requirement: at least 99% delivered</td><td><span class="open">Not measured yet.</span></td></tr>
+      <tr><td>Reconnect time</td><td>Power-cycle a controller; requirement: 2 s or less</td><td><span class="open">Not measured yet.</span></td></tr>
+      <tr><td>Two players at once</td><td>Both controllers live, check that inputs stay separate</td><td><span class="open">Not tested yet.</span></td></tr>
+      <tr><td>Audio prototype</td><td>Breadboard chain, phone recording of test notes</td><td>Notes within 1% of target, but mains hum at about &minus;53 dBFS and only about 0.25 W, so I switched to an I2S class-D amplifier.</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="sec" id="verify">
+    <div class="sec-head"><div><span class="num">05</span><h2>Verification on the FPGA side</h2></div><p>The hub's frames end up in my FPGA design, so I verify that side in simulation and in the build itself.</p></div>
+    <div class="cols3" style="margin-top:0">
+      <div class="col"><h3>Sprite engine testbench</h3><p>I rebuilt the sprite engine in SystemVerilog on one 100.78 MHz PLL clock and wrote a 419-line testbench for it.</p></div>
+      <div class="col"><h3>A bug the simulator missed</h3><p>The simulator passed, but Quartus built a 16,384&times;8 RAM out of about 131,000 flip-flops. I gated the address so it maps to block RAM, and added a block-RAM check to the build script so the same mistake is caught automatically.</p></div>
+      <div class="col"><h3>CPU and SoC</h3><p>The CPU simulation passes 321 checks across 40 programs against an instruction-set model, with exact cycle counts. The whole-SoC simulation runs with 0 errors.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="board">
+    <div class="sec-head"><div><span class="num">06</span><h2>The add-on board and power</h2></div><p>The hub lives on a two-layer add-on PCB that plugs onto the FPGA board. I drew the schematic, directed the layout and checked every version in KiCad. Placement and routing scripts were generated with Claude's help.</p></div>
+    <figure class="fig"><div class="fig-frame raster"><a href="img/console-pcb-3d-top.png" target="_blank" rel="noopener" title="Open full size"><img src="img/console-pcb-3d-top.png" width="1200" height="795" alt="KiCad 3D render of the add-on board: ESP32 module with antenna at the left edge, USB-C power, buttons, rotary encoder, I2S amplifier and two controller ports." loading="lazy"></a></div><figcaption><b>Fig. 3</b> Rev A, about 107 &times; 69 mm, 76 parts. Design-rule findings went from 97 to 0 errors with 3 intentional warnings. The final check and a staff review are still to come before ordering.</figcaption></figure>
+    <div class="cols2">
+      <div class="col"><h3>Found by measuring the file</h3><p>Measuring the routed board showed one I2S line twice as long as the other two (150 mm against 80 mm). Reading the controller schematic showed the I2C header on the wrong ESP32 pins and a regulator that cannot hold 3.3 V as the battery drains.</p></div>
+      <div class="col"><h3>Power budget</h3><p>FPGA board 1.40 A, ESP32 hub 0.50 A and audio 0.30 A: 2.20 A at 5 V, or 11.00 W, with a 1.1 A fuse on the add-on board.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="open">
+    <div class="sec-head"><div><span class="num">07</span><h2>Still open</h2></div><p>What I am working on next for the link.</p></div>
+    <div class="cols3" style="margin-top:0">
+      <div class="col"><h3>Confirm the drift</h3><p>Move the S2 joystick to an ADC1 pin and repeat the test with Wi-Fi on, to confirm or rule out the ADC2 cause.</p></div>
+      <div class="col"><h3>Measure the link</h3><p>Packet loss at 5 m, reconnect time and two players at once, using the sequence-number gap count the hub already keeps.</p></div>
+      <div class="col"><h3>Tune the feel</h3><p>Joystick sensitivity still feels wrong in play. Tune the thresholds with players, not just bench readings.</p></div>
+    </div>
+  </section>
+  <p class="note">Team of four. Controller boards, their schematics and firmware, and the CPU's control unit, ALU and register file are teammates' work. Status as of early November 2026.</p>
+  <nav class="pager wrap-in" aria-label="More"><a href="projects.html"><span>Back</span><strong>&larr; Projects</strong></a><a class="next" href="embedded.html"><span>Next</span><strong>Embedded C projects &rarr;</strong></a></nav>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>

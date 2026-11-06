@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AHB Neural Network Accelerator | Jihee Kim</title>
+<meta name="description" content="An 8x8 systolic array accelerator with block-level and integrated verification.">
+<meta property="og:title" content="AHB Neural Network Accelerator | Jihee Kim">
+<meta property="og:description" content="An 8x8 systolic array accelerator with block-level and integrated verification.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="vision.html"><strong>Vision Engineering</strong><span>LG Energy Solution, 2025&ndash;26</span></a><a href="process.html"><strong>Process Technology</strong><span>LG Energy Solution, 2026</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="retrocore.html"><strong>RetroCore controller link</strong><span>Senior design, firmware and test</span></a><a href="embedded.html"><strong>Embedded C projects</strong><span>ECE 362 robot, balloon payload</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, verification</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, verification</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#education"><strong>Education</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)"><div><p class="eyebrow">ASIC design &middot; Purdue ECE 337 &middot; Team of three</p><h1>AHB Neural Network Accelerator</h1><ul class="tags"><li>SystemVerilog</li><li>AHB</li><li>QuestaSim</li><li>Design Compiler</li></ul><p class="lede measure">A small neural-network accelerator. Software writes weights and inputs over the AHB bus, an 8&times;8 grid of multiply-accumulate units does the math, and an activation stage shapes the results.</p><p class="role"><b>My part</b>The compute core: the 8&times;8 systolic array with 64 pipelined processing elements, and the activation stage with four modes. I verified each block, then the top level, and helped debug integration. Teammates built the AHB interface, controller, SRAM buffer and top level.</p></div></header>
+  <div class="stats"><div class="stat"><b>64 PEs</b><span>in the 8&times;8 weight-stationary array.</span></div><div class="stat"><b>4 modes</b><span>ReLU, Leaky ReLU, binary and identity, selected per lane.</span></div></div>
+  <section class="sec" id="arch"><div class="sec-head"><div><span class="num">01</span><h2>The design</h2></div><p>My blocks are marked.</p></div><figure class="fig"><p class="fig-hint">Swipe to view the full diagram &rarr;</p><div class="fig-frame"><a href="img/asic-accelerator-mine.svg" target="_blank" rel="noopener" title="Open full size"><img src="img/asic-accelerator-mine.svg" width="1040" height="600" alt="Accelerator block diagram with control path, weight path and the systolic array." loading="lazy"></a></div><figcaption><b>Fig. 1</b> Control path, weight path and the compute core.</figcaption></figure></section>
+  <section class="sec" id="tests"><div class="sec-head"><div><span class="num">02</span><h2>What the tests covered</h2></div><p>Blocks first in QuestaSim, then inside the integrated design.</p></div><div class="cols3" style="margin-top:0"><div class="col"><h3>Array</h3><p>Weights land in the right positions, staggered inputs, multiply and add in 8-bit floating point, reset in the middle of an operation, and the done pulse arriving with the data.</p></div><div class="col"><h3>Activation</h3><p>All four modes on every lane, including negative zero, which the sign check treats as zero.</p></div><div class="col"><h3>Top level</h3><p>Identity and full tests with bias, a 128-input vector, and error cases: AHB overrun, NaN and infinity.</p></div></div></section>
+  <nav class="pager wrap-in" aria-label="More"><a href="gpu.html"><span>Previous</span><strong>&larr; GPU Vertex Stage</strong></a><a class="next" href="projects.html"><span>Next</span><strong>Projects &rarr;</strong></a></nav>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embedded projects | Jihee Kim</title>
+<meta name="description" content="An RP2350 display driver in embedded C and a high-altitude balloon payload.">
+<meta property="og:title" content="Embedded projects | Jihee Kim">
+<meta property="og:description" content="An RP2350 display driver in embedded C and a high-altitude balloon payload.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f5c63'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23fffdf9'%3EJK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Jihee Kim</a>
+    <nav class="nav" aria-label="Main"><div class="menu"><a class="top" href="experience.html">Experience</a><div class="sub"><a href="vision.html"><strong>Vision Engineering</strong><span>LG Energy Solution, 2025&ndash;26</span></a><a href="process.html"><strong>Process Technology</strong><span>LG Energy Solution, 2026</span></a></div></div><div class="menu"><a class="top" href="projects.html" aria-current="page">Projects</a><div class="sub"><a href="retrocore.html"><strong>RetroCore controller link</strong><span>Senior design, firmware and test</span></a><a href="embedded.html"><strong>Embedded C projects</strong><span>ECE 362 robot, balloon payload</span></a><a href="riscv.html"><strong>RISC-V Processor</strong><span>ECE 437, verification</span></a><a href="gpu.html"><strong>GPU Vertex Stage</strong><span>SoCET, verification</span></a><a href="asic.html"><strong>AHB Neural Network Accelerator</strong><span>ECE 337</span></a></div></div><div class="menu"><a class="top" href="about.html">About</a><div class="sub"><a href="about.html#education"><strong>Education</strong></a><a href="about.html#skills"><strong>Skills</strong></a><a href="about.html#contact"><strong>Contact</strong></a></div></div></nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap case">
+  <a class="crumb" href="projects.html">&larr; Projects</a>
+  <header class="case-hero" style="grid-template-columns:minmax(0,1fr)"><div><p class="eyebrow">Embedded C &middot; Hardware bring-up</p><h1>Embedded projects</h1><ul class="tags"><li>RP2350</li><li>Embedded C</li><li>Arduino</li><li>Raspberry Pi</li></ul><p class="lede measure">Two smaller projects: a display driver where memory was the constraint, and a balloon payload that had to work on its first and only flight.</p></div></header>
+  <section class="sec" id="ece362" style="padding-top:40px"><div class="sec-head"><div><span class="num">01</span><h2>Color and distance sensor robot</h2></div><p>ECE 362, Microprocessor Systems and Interfacing &middot; April 2026 &middot; Team of 4. A robot that finds a target color and stops 2 inches away.</p></div><div class="stats"><div class="stat"><b>&minus;73%</b><span>RAM use, from 52.2% to 13.9% (273.9 KB to 72.9 KB), after moving to one shared display buffer and partial redraw.</span></div><div class="stat"><b>40 MHz</b><span>SPI to the TFT display, driven from embedded C on an RP2350.</span></div></div><div style="height:18px"></div><div class="cols2" style="margin-top:0"><div class="col"><h3>My part</h3><p>I wrote the SPI TFT display driver and the four UI screens in embedded C. The screens now share one display buffer and redraw only what changed, which is where the RAM saving came from.</p></div><div class="col"><h3>The course behind it</h3><p>The labs covered register-level GPIO, interrupts, timers, ADC with DMA, PWM and UART on the RP2350.</p></div></div></section>
+  <section class="sec" id="balloon"><div class="sec-head"><div><span class="num">02</span><h2>Edge of Space balloon payload</h2></div><p>University of Iowa, Edge of Space Academy &middot; July 2024 &middot; Embedded systems project lead, team of five.</p></div><div class="cols3" style="margin-top:0"><div class="col"><h3>What we built</h3><p>A payload launched to about 30 km to measure cosmic-ray flux, with high-voltage boards, a Geiger&ndash;M&uuml;ller tube, sensors and telemetry on Arduino and Raspberry Pi.</p></div><div class="col"><h3>Testing before launch</h3><p>A payload gets one flight. I soldered, debugged boards, validated wiring and ran test-and-redesign cycles to improve reliability before launch.</p></div><div class="col"><h3>Data acquisition</h3><p>I wrote the Python and C data acquisition code on Linux.</p></div></div></section>
+  <nav class="pager wrap-in" aria-label="More"><a href="retrocore.html"><span>Previous</span><strong>&larr; RetroCore controller link</strong></a><a class="next" href="riscv.html"><span>Next</span><strong>RISC-V Processor &rarr;</strong></a></nav>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; 2026 Jihee Kim</span>
+    <span>Purdue University &middot; Computer Engineering</span>
+  </div>
+</footer>
+</body>
+</html>
